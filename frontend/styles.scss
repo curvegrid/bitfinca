@@ -1,0 +1,114 @@
+@import "variables.scss";
+
+// text input fields START
+.v-text-field {
+  input {
+    color: $DarkBlue!important;
+  }
+  color:$DarkBlue!important;
+}
+
+.theme--light.v-label {
+  color: gray!important;
+}
+
+.theme--light.v-text-field > .v-input__control > .v-input__slot:before {
+  border-color: $SlateGrey!important;
+  border-width: thin;
+}
+.theme--light.v-text-field > .v-input__control > .v-input__slot:after {
+  border-color: $SlateGrey!important;
+  border-width: thin;
+  color: $MidnightBlue!important;
+}
+
+.v-application .primary--text {
+  color: $DarkBlue!important;
+  caret-color: $DarkBlue!important;
+}
+// text input fields END
+
+.v-application {
+  font-family: $body-font-family, !important;
+   .title { // To pin point specific classes of some components
+      font-family: $body-font-family, !important;
+   }
+}
+
+.v-card {
+  elevation: 5!important;
+}
+
+.page-title {
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 38px;
+  color: $MidnightBlue!important;
+}
+
+.page-subtitle {
+  font-family: "Lato"!important;
+  font-style: normal!important;
+  font-weight: 500!important;
+  font-size: 28px;
+  color: $SlateGrey!important;
+}
+
+.page-header-one {
+  font-family: "Lato";
+  font-style: normal!important;
+  font-weight: 500!important;
+  font-size: 32px;
+  color: $DarkBlue!important;
+}
+
+.page-header-two {
+  font-family: "Lato"!important;
+  font-style: normal!important;
+  font-weight: 500!important;
+  font-size: 32px!important;
+  color: $PaleVioletRed!important;
+}
+
+.page-header-three {
+  font-family: "Lato"!important;
+  font-style: normal!important;
+  font-weight: 500!important;
+  font-size: 32px!important;
+  color: $AAVEBlue!important;
+}
+
+.body-text {
+  font-family: "Lato";
+  font-style: normal;
+  font-size:  20px;
+  font-weight: 300;
+  color: $DarkBlue!important;
+}
+
+.nav-button {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  color: $MidnightBlue !important;
+  text-transform: none !important;
+}
+
+.page-button {
+  background-color: $PaleVioletRed !important;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  color: white !important;
+  text-transform: none !important;
+}
+
+.lend-button {
+  background-color: $CadetBlue !important;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  color: white !important;
+  text-transform: none !important;
+}
