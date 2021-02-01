@@ -133,5 +133,37 @@
         }
       ],
     }),
+    methods: {
+      async getTotalTokens() {
+        try {
+        const { data } = await this.$axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+        );
+          this.response = data;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+      async getTransactions() {
+        try {
+        const { data } = await this.$axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+        );
+          this.response = data;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+       async getPaymentsDue() {
+        try {
+        const { data } = await this.$axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+        );
+          this.response = data;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    }
   }
 </script>

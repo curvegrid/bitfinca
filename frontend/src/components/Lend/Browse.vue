@@ -70,7 +70,7 @@
                     <v-card-actions>
                       <v-btn class="page-button">Learn more</v-btn>
                       <v-spacer/>
-                      <v-btn class="lend-button">Lend now</v-btn>
+                      <v-btn class="lend-button" @click="lendNow(i)">Lend now</v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-col>
@@ -165,5 +165,19 @@
         'Arts', 'Agriculture', 'Education', 'Environment', 'Technology'
       ],
     }),
+    methods: {
+      async lendNow(id) {
+        try {
+          const body = { args: [id] }
+          const { data } = await this.$axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // fix this
+            body
+          );
+        this.response = data;
+      } catch (err) {
+        console.log(err);
+      }
+      },
+    }
   }
 </script>

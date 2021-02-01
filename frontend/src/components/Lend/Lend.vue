@@ -25,8 +25,7 @@
               <v-col cols="12"
               md="6">
               <v-text-field
-                v-model="firstname"
-                :rules="nameRules"
+                v-model="name"
                 label="Applicant name"
                 required
               ></v-text-field>
@@ -34,8 +33,7 @@
                <v-col cols="12"
               md="6">
               <v-text-field
-                v-model="firstname"
-                :rules="nameRules"
+                v-model="initialDeposit"
                 label="Initial Deposit"
                 required
               ></v-text-field>
@@ -45,13 +43,12 @@
              <v-col cols="12"
               md="11">
               <v-text-field
-                v-model="firstname"
-                :rules="nameRules"
+                v-model="walletAddress"
                 label="Wallet Address"
                 required
               ></v-text-field>
               </v-col>
-              <v-spacer/><v-btn class="mt-10 ma-4 page-button">Submit</v-btn>
+              <v-spacer/><v-btn @click="addLender()" class="mt-10 ma-4 page-button">Submit</v-btn>
             </v-row>
           </v-form>
         </v-card-text>
@@ -89,7 +86,22 @@ export default {
     'https://randomuser.me/api/portraits/women/79.jpg', 'https://randomuser.me/api/portraits/men/49.jpg', 'https://randomuser.me/api/portraits/men/51.jpg',
     'https://randomuser.me/api/portraits/women/24.jpg', 'https://randomuser.me/api/portraits/men/4.jpg', 'https://randomuser.me/api/portraits/men/11.jpg',
     'https://randomuser.me/api/portraits/women/17.jpg',
-    'https://randomuser.me/api/portraits/men/54.jpg']
+    'https://randomuser.me/api/portraits/men/54.jpg'],
+    name: '',
+    initialDeposit: 0,
+    walletAddress: null,
   }),
+  methods: {
+    async addLender() {
+      try {
+        const { data } = await this.$axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+        );
+        this.response = data;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  },
 };
 </script>

@@ -38,6 +38,15 @@ const routes = [
     component: BusinessDashboard,
   },
   {
+    path: '/dashboard/:id',
+    name: 'Business Dashboard',
+    component: BusinessDashboard,
+    props: (route) => ({
+      create: false,
+      id: route.params.id,
+    }),
+  },
+  {
     path:'/lend',
     name:'Lend',
     component: Lend,

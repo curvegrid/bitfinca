@@ -195,7 +195,7 @@
           </v-list-item-content>
           </v-list-item>
         </v-list>
-          <v-btn class="nav-button" elevation="0" flat><v-icon>mdi-logout</v-icon>Logout</v-btn>
+          <v-btn class="nav-button" elevation="0" text><v-icon>mdi-logout</v-icon>Logout</v-btn>
         </v-layout>
       </v-row>
     </v-navigation-drawer>
@@ -209,13 +209,13 @@
         style="padding-bottom: 50px;"
       />
     </v-main>
-    <app-footer>
+    <app-footer app>
       <v-footer
         dark
         padless
       >
         <v-card
-          flat
+          text
           tile
           width=100%
           class="secondary lighten-1 white--text text-center"
@@ -254,7 +254,6 @@
 <script>
 export default {
   name: "App",
-
   data: () => ({
     userBar: false,
     icons: [{icon: "mdi-github", link: "https://github.com/curvegrid/bitfinca"}],
@@ -276,12 +275,85 @@ export default {
     links: ["Home", "Contacts", "Settings"],
     mini: true,
   }),
+  filters: {
+    prettyJSON(value) {
+      return JSON.stringify(value, null, 2);
+    },
+  },
+
+  /** DApp Sample **/
+  async created() {
+    // If MetaMask's privacy mode is enabled, we must get the user's permission
+    // in order to be able to access their signers
+    if (window.ethereum != null) { // true if user is using MetaMask
+      await window.ethereum.enable();
+    }
+
+    this.connectToWeb3();
+    this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+  },
+  /** DApp Sample End **/
   mounted() {
     window.onscroll = () => {
       this.changeColor();
     };
   },
   methods: {
+    /** DApp Sample **/
+    // We must init the web3 provider so that we can sign transactions
+    connectToWeb3() {
+      const web3Config = this.$root.$_cgutils.connectToWeb3(window.web3);
+      this.$root.$_web3 = web3Config.provider;
+      this.$root.$_web3Available = web3Config.web3Available;
+    },
+    // Get the Eth Address currently selected in MetaMask
+    async getActiveAccount() {
+      const accounts = await this.$root.$_web3.listAccounts();
+      return accounts[0];
+    },
+    async getTotalSupply() {
+      try {
+        const { data } = await this.$axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`,
+        );
+        this.response = data;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+        async mintTokens() {
+      try {
+        const account = await this.getActiveAccount();
+        const jsonBody = {
+          args: [`${this.tokenAmount}`],
+          from: account,
+          signer: account,
+        };
+
+        const {
+          data: {
+            result: { tx, submitted },
+          },
+        } = await this.$axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/mint`,
+          jsonBody,
+        );
+
+        if (!submitted) {
+          // Get the signer from MetaMask
+          const signer = this.$root.$_web3.getSigner(tx.from);
+          // Format the transaction so that ethers.js can sign it
+          const ethersTx = this.$root.$_cgutils.formatEthersTx(tx);
+          // Submit the transaction to the blockchain
+          const txResponse = await signer.sendTransaction(ethersTx);
+          this.response = txResponse;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    /** DApp Sample End **/
+
     changeColor() {
       if (
         document.body.scrollTop > 100 ||

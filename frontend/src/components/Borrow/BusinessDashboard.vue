@@ -34,9 +34,20 @@
               >
                 <img height=300 :src="require('../../assets/icons/clip-order-complete-1.png')">
               </v-col>
-              <v-col>
-                <h2 class="aligh-left page-header-one">My Business</h2>
+              <v-col
+               cols="7"
+              md="6"
+              >
+                <h2 class="aligh-left page-header-one">Education for All</h2>
                 <p class="body-text">Information about my business</p>
+                <v-spacer/>
+                  10% funded
+                  <v-progress-linear
+                    value="10"
+                    height="12"
+                    rounded
+                    color="#B6509E">
+                  </v-progress-linear>
               </v-col>
             </v-row>
             <v-divider/>
@@ -80,8 +91,72 @@
               rounded="lg"
               min-height="300"
             >
-              <!-- Right col -->
+            <v-container>
+              <v-card>
+                <v-card-text>
+                  <v-text-field
+                    :v-model="requestAmount"
+                    label="Amount"
+                  />
+                  <v-btn @click="requestFunds()" class="page-button">Request Additional Funding</v-btn>
+                </v-card-text>
+              </v-card>
+            </v-container>
 
+            <v-container>
+              <v-card>
+                <v-card-text>
+                  <v-text-field
+                    :v-model="requestAmount"
+                    label="Amount"
+                  />
+                  <v-btn @click="updateTotalNeed()" class="page-button">Update Total Need</v-btn>
+                </v-card-text>
+              </v-card>
+            </v-container>
+            <!-- lenders -->
+            <v-container>
+              <v-card>
+              <v-card tile elevation=0>
+                <v-card-title class=page-header-one>My Lenders</v-card-title>
+                <v-card-text>
+                  <v-avatar
+                    v-for="lender in lenders"
+                    :key="lender"
+                    :current-avatar="lender"
+                    color="primary"
+                    size="50"
+                    class="ma-2"
+                  >
+                    <img :src="lender">
+                  </v-avatar>
+                </v-card-text>
+              </v-card>
+              <v-card tile elevation=0>
+                <v-card-title class=page-header-one>My Validators</v-card-title>
+                <v-card-text>
+                  <v-avatar
+                    v-for="v in validators"
+                    :key="v"
+                    :current-avatar="v"
+                    color="primary"
+                    size="50"
+                    class="ma-2"
+                  >
+                    <img :src="v">
+                  </v-avatar>
+                </v-card-text>
+              </v-card>
+              </v-card>
+            </v-container>
+            <v-container>
+              <v-card >
+                <v-card-title class=page-header-one>Documentation</v-card-title>
+                <v-card-text>
+                  Data data data
+                </v-card-text>
+              </v-card>
+            </v-container>
             </v-sheet>
           </v-col>
         </v-row>
@@ -92,6 +167,20 @@
 
 <script>
   export default {
+    props: {
+      create: {
+        type: Boolean,
+        default: false,
+      },
+      id: {
+        type: String,
+        default: '-1',
+      },
+      editable: {
+        type: Boolean,
+        default: false,
+      },
+    },
     data: () => ({
       updates: [
         {
@@ -115,6 +204,40 @@
           text: 'Update on my business',
         },
       ],
+      lenders: ['https://randomuser.me/api/portraits/men/1.jpg', 'https://randomuser.me/api/portraits/men/2.jpg',
+        'https://randomuser.me/api/portraits/women/3.jpg', 'https://randomuser.me/api/portraits/women/4.jpg', 'https://randomuser.me/api/portraits/men/10.jpg',
+        'https://randomuser.me/api/portraits/women/5.jpg', 'https://randomuser.me/api/portraits/women/8.jpg', 'https://randomuser.me/api/portraits/men/12.jpg',
+        'https://randomuser.me/api/portraits/women/32.jpg'],
+      validators: ['https://randomuser.me/api/portraits/men/15.jpg', 'https://randomuser.me/api/portraits/men/36.jpg',
+        'https://randomuser.me/api/portraits/women/8.jpg', 'https://randomuser.me/api/portraits/women/35.jpg', 'https://randomuser.me/api/portraits/men/50.jpg',
+        'https://randomuser.me/api/portraits/women/43.jpg', 'https://randomuser.me/api/portraits/women/24.jpg', 'https://randomuser.me/api/portraits/men/41.jpg',
+        'https://randomuser.me/api/portraits/women/78.jpg', 'https://randomuser.me/api/portraits/women/46.jpg', 'https://randomuser.me/api/portraits/women/27.jpg',
+        'https://randomuser.me/api/portraits/men/45.jpg', 'https://randomuser.me/api/portraits/men/87.jpg',
+        'https://randomuser.me/api/portraits/women/78.jpg'],
+      requestAmount: 0,
+      updateTotalNeed: 0,
     }),
+    methods: {
+      async requestFunds() {
+        try {
+        const { data } = await this.$axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+        );
+          this.response = data;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+      async updateNeed() {
+        try {
+        const { data } = await this.$axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+        );
+          this.response = data;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    }
   }
 </script>
