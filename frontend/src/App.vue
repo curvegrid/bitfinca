@@ -28,7 +28,7 @@
     </v-app-bar-title>
     <v-spacer></v-spacer>
       <v-btn
-        href="/about"
+        to="/about"
         target=""
         text
         class="text-center nav-button"
@@ -44,7 +44,7 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            href="/lend"
+            to="/lend"
             target=""
             text
             class="text-center nav-button"
@@ -59,7 +59,7 @@
           <v-list-item
             v-for="(item, index) in lend"
             :key="index"
-            :href="item.href"
+            :to="item.href"
             link
           >
             <v-list-item-title class="body-text" style="font-weight: 500;">{{ item.title }}</v-list-item-title>
@@ -76,7 +76,7 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            href="/borrow"
+            to="/borrow"
             target=""
             text
             class="text-center nav-button"
@@ -91,7 +91,7 @@
           <v-list-item
             v-for="(item, index) in borrow"
             :key="index"
-            :href="item.href"
+            :to="item.href"
             link
           >
             <v-list-item-title class="body-text" style="font-weight: 500;">{{ item.title }}</v-list-item-title>
@@ -100,7 +100,7 @@
       </v-menu>
       <!-- borrow end -->
       <v-btn
-        href="/support"
+        to="/support"
         target=""
         text
         class="text-center nav-button"
@@ -161,7 +161,7 @@
           <v-list-item
             v-for="s in sideBar"
             :key="s.title"
-            :href="s.href"
+            :to="s.href"
             link
             >
           <v-list-item-content>

@@ -5,11 +5,11 @@
         <v-row>
             <v-col
               cols="7"
+              xs="5"
               md="5">
             <v-img
               :src="require('../assets/BitfincaXLarge.svg')"
               contain
-              height="500"
             />
             </v-col>
             <v-col>
