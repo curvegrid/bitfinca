@@ -8,6 +8,7 @@ import BusinessDashboard from '@/components/Borrow/BusinessDashboard.vue';
 import Lend from '../components/Lend/Lend.vue';
 import Browse from '../components/Lend/Browse.vue';
 import Support from '../components/Validation/Support.vue';
+import ValidatePage from '../components/Validation/ValidatePage.vue'
 import About from '../components/About.vue';
 import ManageTokens from '../components/ManageTokens.vue';
 import Details from '../components/Lend/Details.vue';
@@ -55,6 +56,11 @@ const routes = [
     path:'/support',
     name:'Support',
     component: Support,
+  },
+  {
+    path:'/validate',
+    name:'Validate',
+    component: ValidatePage,
   },
   {
     path: '/about',

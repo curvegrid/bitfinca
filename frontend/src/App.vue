@@ -99,15 +99,41 @@
         </v-list>
       </v-menu>
       <!-- borrow end -->
-      <v-btn
-        to="/support"
-        target=""
-        text
-        class="text-center nav-button"
+
+    <!-- validate -->
+      <v-menu
+        open-on-hover
+        bottom
+        offset-y
+        :rounded="true"
       >
-      Support
-      </v-btn>
-      <v-spacer></v-spacer>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            to="/support"
+            target=""
+            text
+            class="text-center nav-button"
+            v-bind="attrs"
+            v-on="on"
+          >
+            <span class="mr-2">Validate</span>
+          </v-btn>
+        </template>
+
+        <v-list color="nav">
+          <v-list-item
+            v-for="(item, index) in validate"
+            :key="index"
+            :to="item.href"
+            link
+          >
+            <v-list-item-title class="body-text" style="font-weight: 500;">{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <!-- validate end -->
+
+            <v-spacer></v-spacer>
        <v-spacer></v-spacer>
     </v-app-bar>
 
@@ -178,6 +204,10 @@
 
     <v-main>
       <router-view/>
+      <v-snackbar-queue
+        :timeout="4000"
+        style="padding-bottom: 50px;"
+      />
     </v-main>
     <app-footer>
       <v-footer
@@ -194,11 +224,13 @@
             <v-btn
               v-for="icon in icons"
               :key="icon"
+              :href="icon.link"
+              target="_blank"
               class="mx-4 white--text"
               icon
             >
               <v-icon size="24px">
-                {{ icon }}
+                {{ icon.icon }}
               </v-icon>
             </v-btn>
           </v-card-text>
@@ -225,9 +257,10 @@ export default {
 
   data: () => ({
     userBar: false,
-    icons: ["mdi-linkedin", "mdi-github"],
+    icons: [{icon: "mdi-github", link: "https://github.com/curvegrid/bitfinca"}],
     lend: [{ title: "Browse Businesses", href: "/browse" }],
     borrow: [{ title: "Business Dashboard", href: "/dashboard" }],
+    validate: [{ title: "Validate Businesses", href: "/validate" }],
     sideBar: [
       { title: "My Account", icon: "mdi-account" },
       {

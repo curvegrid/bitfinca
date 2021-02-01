@@ -15,7 +15,55 @@
       </v-card>
     </v-container>
 
+  <div>
     <v-container>
+      <v-card>
+        <v-card-title class="page-header-one" style="font-size: 32px;">Lender Application</v-card-title>
+        <v-card-text class="body-text">
+          <v-form>
+            <v-row>
+              <v-col cols="12"
+              md="6">
+              <v-text-field
+                v-model="firstname"
+                :rules="nameRules"
+                label="Applicant name"
+                required
+              ></v-text-field>
+              </v-col>
+               <v-col cols="12"
+              md="6">
+              <v-text-field
+                v-model="firstname"
+                :rules="nameRules"
+                label="Initial Deposit"
+                required
+              ></v-text-field>
+              </v-col>
+            </v-row>
+             <v-row>
+             <v-col cols="12"
+              md="11">
+              <v-text-field
+                v-model="firstname"
+                :rules="nameRules"
+                label="Wallet Address"
+                required
+              ></v-text-field>
+              </v-col>
+              <v-spacer/><v-btn class="mt-10 ma-4 page-button">Submit</v-btn>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-container>
+  </div>
+
+
+    <v-container>
+      <h1 class="page-title">
+       Join a community of lenders
+      </h1>
       <v-avatar
         v-for="lender in lenders"
         :key="lender"

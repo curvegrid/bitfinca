@@ -39,4 +39,8 @@ contract Account {
     emit Withdraw(_amount);
   }
 
+  function balance() public view returns (uint) {
+    return balances[msg.sender];
+  }
+
 }
