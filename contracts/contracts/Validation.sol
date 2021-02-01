@@ -11,8 +11,14 @@ contract Validation {
 
     event Validate(address business, bool approval);
 
-    mapping(address => mapping(address => bool)) businessToValidators; // businessID => Validator => approval
+    mapping(address => mapping(address => bool)) public businessToValidators; // businessID => Validator => approval
     mapping(address => uint) public businessValidatorCount; // businessID => validatorCount
+
+    address public accountAddress;
+
+    constructor(address _accountAddress) public {
+        accountAddress = _accountAddress;
+    }
 
     function addValidator(string memory _name, address _account) public {
         validators.push(Validator({
@@ -31,7 +37,7 @@ contract Validation {
             businessValidatorCount[business] -= 1;
         }
         businessToValidators[business][msg.sender] = approval;
-        Account.balances[msg.sender] += 1; // placeholder for the nominal fee validators earn
+        Account(accountAddress).incrementBalance(msg.sender, 1); // placeholder for the nominal fee validators earn
 
         emit Validate(business, approval);
     }

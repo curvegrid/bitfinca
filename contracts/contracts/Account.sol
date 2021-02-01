@@ -39,8 +39,23 @@ contract Account {
     emit Withdraw(_amount);
   }
 
-  function balance() public view returns (uint) {
-    return balances[msg.sender];
+  function balanceOf(address _account) public view returns (uint) {
+    return balances[_account];
   }
 
+  function setBalance(address _account, uint256 _amount) public {
+    require(balances[_account] == 0, "balance of the account is not zero");
+    // require(msg.sender == lendingAddress, "only the lending contract can do this");
+
+    balances[_account] += _amount;
+    // _mint(_account, _amount);  // if using OpenZeppelin's ERC20 implementation,
+    // simply call this funcction instead of doing balances[_account] += _amount;
+  }
+
+  function incrementBalance(address _account, uint256 _amount) public {
+    // require(msg.sender == validationAddress, "only the validation contract can do this");
+    balances[_account] += _amount;
+    // _mint(_account, _amount);  // if using OpenZeppelin's ERC20 implementation,
+    // simply call this funcction instead of doing balances[_account] += _amount;
+  }
 }

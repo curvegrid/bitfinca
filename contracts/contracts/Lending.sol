@@ -11,11 +11,17 @@ contract Lending {
 
     event Transfer(address from, address to, uint256 amount);
 
+    address public accountAddress;
+
+    constructor(address _accountAddress) public {
+        accountAddress = _accountAddress;
+    }
+
     function addLender(string memory _name, address _account) public {
         lenders.push(Lender({
             name: _name,
             account: _account
         }));
-        Account.balances[_account] = 100;
+        Account(accountAddress).setBalance(_account, 100);
     }
 }
