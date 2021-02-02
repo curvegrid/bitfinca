@@ -6,7 +6,7 @@
       elevation="0"
       app
     >
-    <a href="/">
+    <router-link to="/">
     <v-img
       alt="Bitfinca Name"
       class="mt-2 shrink hidden-sm-and-down"
@@ -14,9 +14,9 @@
       min-width="20"
       :src="require('./assets/logo.svg')"
       width="80"
-    /></a>
+    /></router-link>
     <v-app-bar-title>
-       <a href="/">
+       <router-link to="/">
         <v-img
           alt="Bitfinca Name"
           class="shrink mt-1 mb-4 hidden-sm-and-down"
@@ -24,7 +24,7 @@
           min-width="100"
           :src="require('./assets/logoDark.svg')"
           width="130"
-        /></a>
+        /></router-link>
     </v-app-bar-title>
     <v-spacer></v-spacer>
       <v-btn

@@ -88,8 +88,9 @@ const routes = [
 ];
 
 const router = new Router({
-  mode: 'history',
+  mode: 'hash',
   routes,
+  base: process.env.BASE_URL,
 });
 
 export default router;
