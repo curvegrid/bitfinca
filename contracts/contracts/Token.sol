@@ -1,6 +1,8 @@
+// SPDX-License-Identifier: Unlicensed
+
 pragma solidity >=0.4.22 <0.9.0;
 
-contract Account {
+contract Token {
   mapping (address => uint256) public _balances;
   mapping (address => mapping (address => uint256)) private _allowed;
 
@@ -8,7 +10,7 @@ contract Account {
 
   address private owner;
 
-  constructor() public {
+  constructor() {
     owner = msg.sender;
   }
 
@@ -116,7 +118,6 @@ contract Account {
     emit Transfer(from, to, value);
     return true;
   }
-
 
   /**
    * @dev Increase the amount of tokens that an owner allowed to a spender.

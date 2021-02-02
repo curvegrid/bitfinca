@@ -182,7 +182,7 @@
       async getTotalTokens() {
         try {
         const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`,
         );
           this.total = data.result;
         } catch (err) {
@@ -191,7 +191,7 @@
       },
       async getTransactions() {
         try {
-        const { data } = await this.axios.post(
+        const { data } = await this.axios.get(
           `/api/v0/events?contract_address=${this.$CONTRACT_LABEL_OR_ADDRESS}`, // TODO fix this
         );
           this.transactions = data;
