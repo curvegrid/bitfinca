@@ -19,7 +19,7 @@ export default {
         delete tx.hash;
         return tx;
       },
-      connectToWeb3(browserHook, jsonRpc = '', signerPrivateKey = '') {
+      connectToWeb3(browserHook) {
         const result = {
           provider: null,
           web3Available: false,

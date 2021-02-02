@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "0.18.0",
     "core-js": "^3.6.5",
+    "ethers": "^5.0.27",
     "vue": "^2.6.11",
     "vue-router": "^3.5.1",
     "vuetify": "^2.2.11",

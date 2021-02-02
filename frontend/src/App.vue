@@ -307,7 +307,7 @@ export default {
     },
     async getTotalSupply() {
       try {
-        const { data } = await this.$axios.post(
+        const { data } = await this.$axiosMultibaas.post(
           `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`,
         );
         this.response = data;

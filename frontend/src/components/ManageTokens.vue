@@ -24,7 +24,7 @@
                 <img height=150 :src="require('../assets/icons/clip-payment.png')">
               </v-col>
               <v-col>
-                <h2 class="aligh-left page-header-one">My Account</h2>
+                <h2 class="aligh-left page-header-one">Account Overview</h2>
                 <p class="body-text">Token Balance: </p>
               </v-col>
             </v-row>
@@ -109,7 +109,40 @@
               rounded="lg"
               min-height="300"
             >
-              <!-- Right col -->
+              <v-card elevation=0>
+                <v-card-title class=page-header-one>Details</v-card-title>
+                <v-card-text class=body-text>
+                  <v-row>
+                    <v-col>
+                      <strong>Total Supply</strong>
+                    </v-col>
+                    <v-col>
+                      {{ total.output }}
+                    </v-col>
+
+                  </v-row></v-card-text>
+              </v-card>
+
+               <v-card elevation=0>
+                <v-card-title class=page-header-one>Actions</v-card-title>
+                <v-card-text class=body-text>
+                  <v-row>
+                    <v-col md=5>
+                      <strong>Deposit</strong>
+                    </v-col>
+                    <v-col md=5>
+                      <v-text-field @click="deposit()" v-model="depositAmount" class=ma-0 dense append-icon="mdi-plus"></v-text-field>
+                    </v-col>
+                    </v-row><v-row>
+                     <v-col md=5>
+                      <strong>Withdraw</strong>
+                    </v-col>
+                    <v-col md=5>
+                      <v-text-field @click="withdraw()" v-model="withdrawAmount" class=ma-0 dense append-icon="mdi-minus"></v-text-field>
+                    </v-col>
+
+                  </v-row></v-card-text>
+              </v-card>
 
             </v-sheet>
           </v-col>
@@ -122,34 +155,46 @@
 <script>
   export default {
     data: () => ({
+      total: -1,
+      transactions: null,
+      depositAmount: 0,
+      withdrawAmount: 0,
       payments: [
         {
           name: 'Lender 1', amount: '5000',
         }
       ],
-      transactions: [
-        {
-          name: 'Lender 1', amount: '-5000',
-        }
-      ],
     }),
+
+    async created() {
+      // If MetaMask's privacy mode is enabled, we must get the user's permission
+      // in order to be able to access their signers
+      if (window.ethereum != null) { // true if user is using MetaMask
+        await window.ethereum.enable();
+      }
+
+      this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+      const gtotal = this.getTotalTokens();
+      const gTrans = this.getTransactions();
+      Promise.all([gtotal, gTrans]);
+    },
     methods: {
       async getTotalTokens() {
         try {
-        const { data } = await this.$axios.post(
+        const { data } = await this.axios.post(
           `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
         );
-          this.response = data;
+          this.total = data.result;
         } catch (err) {
           console.log(err);
         }
       },
       async getTransactions() {
         try {
-        const { data } = await this.$axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+        const { data } = await this.axios.post(
+          `/api/v0/events?contract_address=${this.$CONTRACT_LABEL_OR_ADDRESS}`, // TODO fix this
         );
-          this.response = data;
+          this.transactions = data;
         } catch (err) {
           console.log(err);
         }
@@ -164,6 +209,12 @@
           console.log(err);
         }
       },
+      deposit() {
+        console.log("Deposit", this.depositAmount);
+      },
+      withdraw() {
+        console.log("Withdraw", this.withdrawAmount);
+      }
     }
   }
 </script>
