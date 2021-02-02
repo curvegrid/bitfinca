@@ -22,7 +22,7 @@
           </p>
         </v-card-text>
         <v-card-actions>
-          <v-btn class=page-button rounded href="/borrowapplication">
+          <v-btn class=page-button rounded to="/borrowapplication">
             Get started
           </v-btn>
         </v-card-actions>
