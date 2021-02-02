@@ -41,4 +41,8 @@ contract Validation {
 
         emit Validate(business, approval);
     }
+
+    function addBusiness(address business) public {
+        businessValidatorCount[business] = 0; // set validator count to 0
+    }
 }

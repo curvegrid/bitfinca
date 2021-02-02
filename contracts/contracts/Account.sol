@@ -1,8 +1,7 @@
 pragma solidity >=0.4.22 <0.9.0;
-import "./IERC20.sol";
 
 contract Account {
-  mapping (address => uint256) private _balances;
+  mapping (address => uint256) public _balances;
   mapping (address => mapping (address => uint256)) private _allowed;
 
   uint256 private _totalSupply;
@@ -174,7 +173,7 @@ contract Account {
    * @param account The account that will receive the created tokens.
    * @param amount The amount that will be created.
    */
-  function _mint(address account, uint256 amount) internal {
+  function mint(address account, uint256 amount) public {
     require(account != address(0));
     _totalSupply = _totalSupply + amount;
     _balances[account] = _balances[account] + amount;
@@ -187,7 +186,7 @@ contract Account {
    * @param account The account whose tokens will be burnt.
    * @param amount The amount that will be burnt.
    */
-  function _burn(address account, uint256 amount) internal {
+  function burn(address account, uint256 amount) public {
     require(account != address(0));
     require(amount <= _balances[account]);
 
@@ -209,7 +208,7 @@ contract Account {
     // Should https://github.com/OpenZeppelin/zeppelin-solidity/issues/707 be accepted,
     // this function needs to emit an event with the updated approval.
     _allowed[account][msg.sender] = _allowed[account][msg.sender] - amount;
-    _burn(account, amount);
+    burn(account, amount);
   }
 
   function deposit(uint256 _amount) public {
@@ -232,11 +231,11 @@ contract Account {
   function setBalance(address _account, uint256 _amount) public {
     require(_balances[_account] == 0, "balance of the account is not zero");
     // require(msg.sender == lendingAddress, "only the lending contract can do this");
-    _mint(_account, _amount);
+    mint(_account, _amount);
   }
 
   function incrementBalance(address _account, uint256 _amount) public {
     // require(msg.sender == validationAddress, "only the validation contract can do this");
-    _mint(_account, _amount);
+    mint(_account, _amount);
   }
 }
