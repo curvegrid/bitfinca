@@ -35,6 +35,10 @@
    }
 }
 
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > td, .v-data-table > .v-data-table__wrapper > table > thead > tr > td, .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td {
+  color: $MidnightBlue;
+}
+
 .v-card {
   elevation: 5!important;
 }

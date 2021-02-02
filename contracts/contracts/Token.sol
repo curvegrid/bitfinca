@@ -3,16 +3,16 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 contract Token {
-  mapping (address => uint256) public _balances;
+  constructor() public{
+    owner = msg.sender;
+  }
+
+  mapping (address => uint256) public _balances; // make private
   mapping (address => mapping (address => uint256)) private _allowed;
 
   uint256 private _totalSupply;
 
   address private owner;
-
-  constructor() {
-    owner = msg.sender;
-  }
 
   event Transfer(
     address indexed from,

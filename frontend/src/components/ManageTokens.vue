@@ -72,31 +72,10 @@
                   </v-card-title>
                   <v-card-text>
                     <v-data-table
-                      fixed-header
-                      height="300px"
-                    >
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-left">
-                              Name
-                            </th>
-                            <th class="text-left">
-                              Amount
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="item in transactions"
-                            :key="item.name"
-                          >
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.amount }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-data-table>
+                      height="350px"
+                      :headers="headers"
+                      :items="items"
+                    ></v-data-table>
                   </v-card-text>
                 </v-card>
               </v-row>
@@ -127,23 +106,27 @@
                 <v-card-title class=page-header-one>Actions</v-card-title>
                 <v-card-text class=body-text>
                   <v-row>
-                    <v-col md=5>
+                    <v-col md=3>
                       <strong>Deposit</strong>
                     </v-col>
-                    <v-col md=5>
-                      <v-text-field @click="deposit()" v-model="depositAmount" class=ma-0 dense append-icon="mdi-plus"></v-text-field>
+                    <v-col md=8>
+                      <v-row>
+                      <v-text-field v-model="depositAmount" class=ma-0 dense></v-text-field>
+                      <v-btn icon @click="deposit()"><v-icon>mdi-plus</v-icon></v-btn>
+                      </v-row>
                     </v-col>
                     </v-row><v-row>
-                     <v-col md=5>
+                     <v-col md=3>
                       <strong>Withdraw</strong>
                     </v-col>
-                    <v-col md=5>
-                      <v-text-field @click="withdraw()" v-model="withdrawAmount" class=ma-0 dense append-icon="mdi-minus"></v-text-field>
+                    <v-col md=8>
+                      <v-row>
+                      <v-text-field v-model="depositAmount" class=ma-0 dense></v-text-field>
+                      <v-btn icon @click="withdraw()"><v-icon>mdi-minus</v-icon></v-btn>
+                      </v-row>
                     </v-col>
-
                   </v-row></v-card-text>
               </v-card>
-
             </v-sheet>
           </v-col>
         </v-row>
@@ -156,27 +139,27 @@
   export default {
     data: () => ({
       total: -1,
-      transactions: null,
+      transactions: [],
+      items: [],
       depositAmount: 0,
       withdrawAmount: 0,
+      headers: [],
       payments: [
         {
           name: 'Lender 1', amount: '5000',
         }
       ],
     }),
-
     async created() {
       // If MetaMask's privacy mode is enabled, we must get the user's permission
       // in order to be able to access their signers
       if (window.ethereum != null) { // true if user is using MetaMask
         await window.ethereum.enable();
       }
-
       this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
       const gtotal = this.getTotalTokens();
       const gTrans = this.getTransactions();
-      Promise.all([gtotal, gTrans]);
+      Promise.all([gtotal, gTrans]).then(this.makeModel());
     },
     methods: {
       async getTotalTokens() {
@@ -192,21 +175,41 @@
       async getTransactions() {
         try {
         const { data } = await this.axios.get(
-          `/api/v0/events?contract_address=${this.$CONTRACT_LABEL_OR_ADDRESS}`, // TODO fix this
+          `/api/v0/events?contract_address=${this.$CONTRACT_LABEL_OR_ADDRESS}`,
         );
-          this.transactions = data;
+        this.transactions = data.result;
         } catch (err) {
           console.log(err);
         }
+        for (const t of this.transactions) {
+          this.items.push({
+            triggeredAt: t.triggeredAt,
+            name: t.event.name,
+            contractName: t.transaction.contract.name,
+            contractAddress: t.transaction.contract.addressLabel,
+            methodName: t.transaction.method.name,
+            value: t.transaction.method.inputs[0].value,
+          })
+        }
       },
-       async getPaymentsDue() {
-        try {
-        const { data } = await this.$axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
-        );
-          this.response = data;
-        } catch (err) {
-          console.log(err);
+      makeModel() {
+        this.headers = [
+          {text: 'Time', value: 'triggeredAt'},
+          {text: 'Name', value: 'name'},
+          {text: 'Contract', value:'contractName'},
+          {text: 'Contract Address', value:'contractAddress'},
+          // {text: 'Method', value: 'methodName'},
+          {text: 'Value', value: 'value'}
+          ]
+        for (const t of this.transactions) {
+          this.items.push({
+            triggeredAt: t.triggeredAt,
+            name: t.event.name,
+            contractName: t.transaction.contract.name,
+            contractAddress: t.transaction.contract.address,
+            methodName: t.transaction.method.name,
+            value: t.transaction.method.inputs,
+          })
         }
       },
       deposit() {
