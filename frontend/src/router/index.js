@@ -39,7 +39,7 @@ const routes = [
   },
   {
     path: '/dashboard/:id',
-    name: 'Business Dashboard',
+    name: 'Business Dashboard ID',
     component: BusinessDashboard,
     props: (route) => ({
       create: false,
@@ -60,6 +60,15 @@ const routes = [
     path:'/details',
     name:'Details',
     component: Details,
+  },
+  {
+    path:'/details/:id',
+    name:'Details ID',
+    component: Details,
+    props: (route) => ({
+      create: false,
+      id: route.params.id,
+    })
   },
   {
     path:'/support',

@@ -128,7 +128,7 @@
                     size="50"
                     class="ma-2"
                   >
-                    <img :src="lender">
+                    <img :src="lender.picture.large">
                   </v-avatar>
                 </v-card-text>
               </v-card>
@@ -143,19 +143,20 @@
                     size="50"
                     class="ma-2"
                   >
-                    <img :src="v">
+                    <img :src="v.picture.large">
                   </v-avatar>
                 </v-card-text>
               </v-card>
               </v-card>
             </v-container>
+
             <v-container>
               <v-card >
                 <v-card-title class=page-header-one>Documentation</v-card-title>
-                <v-card-text>
-                  Data data data
-                </v-card-text>
-              </v-card>
+                  <v-card-text>
+                    Data data data
+                  </v-card-text>
+                </v-card>
             </v-container>
             </v-sheet>
           </v-col>
@@ -175,10 +176,6 @@
       id: {
         type: String,
         default: '-1',
-      },
-      editable: {
-        type: Boolean,
-        default: false,
       },
     },
     data: () => ({
@@ -204,19 +201,12 @@
           text: 'Update on my business',
         },
       ],
-      lenders: ['https://randomuser.me/api/portraits/men/1.jpg', 'https://randomuser.me/api/portraits/men/2.jpg',
-        'https://randomuser.me/api/portraits/women/3.jpg', 'https://randomuser.me/api/portraits/women/4.jpg', 'https://randomuser.me/api/portraits/men/10.jpg',
-        'https://randomuser.me/api/portraits/women/5.jpg', 'https://randomuser.me/api/portraits/women/8.jpg', 'https://randomuser.me/api/portraits/men/12.jpg',
-        'https://randomuser.me/api/portraits/women/32.jpg'],
-      validators: ['https://randomuser.me/api/portraits/men/15.jpg', 'https://randomuser.me/api/portraits/men/36.jpg',
-        'https://randomuser.me/api/portraits/women/8.jpg', 'https://randomuser.me/api/portraits/women/35.jpg', 'https://randomuser.me/api/portraits/men/50.jpg',
-        'https://randomuser.me/api/portraits/women/43.jpg', 'https://randomuser.me/api/portraits/women/24.jpg', 'https://randomuser.me/api/portraits/men/41.jpg',
-        'https://randomuser.me/api/portraits/women/78.jpg', 'https://randomuser.me/api/portraits/women/46.jpg', 'https://randomuser.me/api/portraits/women/27.jpg',
-        'https://randomuser.me/api/portraits/men/45.jpg', 'https://randomuser.me/api/portraits/men/87.jpg',
-        'https://randomuser.me/api/portraits/women/78.jpg'],
       requestAmount: 0,
       updateTotalNeed: 0,
     }),
+    created() {
+      Promise(this.fetchUsers(Math.random()*20+3, Math.random()*20+1));
+    },
     methods: {
       async requestFunds() {
         try {
@@ -237,6 +227,24 @@
         } catch (err) {
           console.log(err);
         }
+      },
+      async fetchUsers(numLenders, numValidators) {
+        const lResponse = await this.$axios.get('https://randomuser.me/api/', {
+        params: {
+          seed: 'l'+this.id,
+          results: parseInt(numLenders),
+          inc: 'name,picture,location'
+        }
+        });
+        this.lenders = lResponse.data.results;
+        const vResponse= await this.$axios.get('https://randomuser.me/api/', {
+        params: {
+          seed: 'v'+ this.id,
+          results: parseInt(numValidators),
+          inc: 'name,picture,location'
+        }
+        });
+        this.validators = vResponse.data.results;
       },
     }
   }

@@ -3,6 +3,7 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import router from './router'
 import axios from 'axios'
+import Vuetify from 'vuetify'
 
 // global variable
 Vue.prototype.$axios = axios
@@ -22,5 +23,6 @@ Vue.config.productionTip = false
 new Vue({
   router,
   vuetify,
+  Vuetify,
   render: h => h(App)
 }).$mount('#app')

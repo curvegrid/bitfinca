@@ -1,0 +1,77 @@
+{"entrepreneurs":
+  {"coworking_space": {
+      "title":"Coworking Space",
+      "id":1,
+      "src":"pablo-finance.svg",
+      "progress":22,
+      "description": "A loan will help this entrepreneur overcome the challenges brought by COVID-19. "
+    },
+    "agriculture": {
+      "title":"Agriculture",
+      "id":2,
+      "src":"pablo-eco-technologies.svg",
+      "progress":66
+    },
+    "small_business": {
+      "title":"Small Business",
+      "id":3,
+      "src":"pablo-payment-processed.svg",
+      "progress":44,
+      "description": "A loan will help this small business owner overcome the challenges brought by COVID-19. "
+    },
+    "resturant": {
+      "title":"Resturant",
+      "id":4,
+      "src":"pablo-order-completed.svg",
+      "progress":16
+    },
+    "education_for_all": {
+      "title":"Education for All",
+      "id":5,
+      "src":"pablo-education.svg",
+      "progress":18
+    },
+    "assessibility": {
+      "title":"Assessibility",
+      "id":6,
+      "src":"pablo-help-and-care.svg",
+      "progress":54
+    },
+    "facial_recognition": {
+      "title":"Facial Recognition",
+      "id":7,
+      "src":"pablo-face-recognition.svg",
+      "progress":24
+    },
+    "blogging": {
+      "title":"Blogging",
+      "id":8,
+      "src":"pablo-blogging.svg",
+      "progress":11
+    },
+    "record_label": {
+      "title":"Record Label",
+      "id":9,
+      "src":"pablo-friendship.svg",
+      "progress":26
+    },
+    "mining": {
+      "title":"Mining",
+      "id":10,
+      "src":"pablo-bitcoin-mining.svg",
+      "progress":49
+    },
+    "artificial_intelligence": {
+      "title":"Artificial Intelligence",
+      "id":11,
+      "src":"pablo-artifficial-intelligence.svg",
+      "progress":27
+    },
+    "car_rental": {
+      "title":"Car Rental",
+      "id":12,
+      "src":"pablo-car-rental.svg",
+      "progress":40
+    }
+  }
+}

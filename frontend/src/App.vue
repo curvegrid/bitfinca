@@ -166,8 +166,8 @@
             nav
           >
             <v-list-item
-              v-for="s in sideBar"
-              :key="s.title"
+              v-for="(s,i) in sideBar"
+              :key="i"
             >
               <v-list-item-action>
                 <v-icon>{{ s.icon }}</v-icon>
@@ -204,12 +204,7 @@
 
     <v-main>
       <router-view/>
-      <v-snackbar-queue
-        :timeout="4000"
-        style="padding-bottom: 50px;"
-      />
     </v-main>
-    <app-footer app>
       <v-footer
         dark
         padless
@@ -246,7 +241,6 @@
           </v-card-text>
         </v-card>
       </v-footer>
-    </app-footer>
   </v-app>
 </div>
 </template>

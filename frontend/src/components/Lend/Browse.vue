@@ -55,7 +55,7 @@
                     <v-card-title class=body-text>
                       {{ e.title }}
                       <v-spacer/>
-                      <v-avatar><img :src="e.avatar"></v-avatar>
+                      <v-avatar><img :src="people[e.id].picture.large"></v-avatar>
                     </v-card-title>
                     <v-card-text>
                       <img height=150 :src="(require(`../../assets/entrepreneurs/${e.src}`))"/>
@@ -68,7 +68,7 @@
                       </v-progress-linear>
                     </v-card-text>
                     <v-card-actions>
-                      <v-btn class="page-button">Learn more</v-btn>
+                      <v-btn @click="goTo(i)" class="page-button">Learn more</v-btn>
                       <v-spacer/>
                       <v-btn class="lend-button" @click="lendNow(i)">Lend now</v-btn>
                     </v-card-actions>
@@ -85,87 +85,23 @@
 </template>
 
 <script>
+import Entrepreneurs  from '../../assets/DummyData.json';
+import People from '../../assets/People.json'
+
   export default {
     data: () => ({
-      entrepreneurs: [
-        {
-          title: 'Coworking Space',
-          avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
-          src: 'pablo-finance.svg',
-          progress: 22,
-        },
-        {
-          title: 'Agriculture',
-          avatar: 'https://randomuser.me/api/portraits/men/66.jpg',
-          src: 'pablo-eco-technologies.svg',
-          progress: 66,
-        },
-        {
-          title: 'Small Business',
-          avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-          src: 'pablo-payment-processed.svg',
-          progress: 44,
-        },
-        {
-          title: 'Resturant',
-          avatar: 'https://randomuser.me/api/portraits/women/16.jpg',
-          src: 'pablo-order-completed.svg',
-          progress: 16,
-        },
-        {
-          title: 'Education for All',
-          avatar: 'https://randomuser.me/api/portraits/men/18.jpg',
-          src: 'pablo-education.svg',
-          progress: 18,
-        },
-        {
-          title: 'Assessibility',
-          avatar: 'https://randomuser.me/api/portraits/men/54.jpg',
-          src: 'pablo-help-and-care.svg',
-          progress: 54,
-        },
-        {
-          title: 'Facial Recognition',
-          avatar: 'https://randomuser.me/api/portraits/women/24.jpg',
-          src: 'pablo-face-recognition.svg',
-          progress: 24,
-        },
-        {
-          title: 'Blogging',
-          avatar: 'https://randomuser.me/api/portraits/women/11.jpg',
-          src: 'pablo-blogging.svg',
-          progress: 11,
-        },
-        {
-          title: 'Record Label',
-          avatar: 'https://randomuser.me/api/portraits/men/26.jpg',
-          src: 'pablo-friendship.svg',
-          progress: 26,
-        },
-        {
-          title: 'Mining',
-          avatar: 'https://randomuser.me/api/portraits/men/49.jpg',
-          src: 'pablo-bitcoin-mining.svg',
-          progress: 49,
-        },
-        {
-          title: 'Artificial Intelligence',
-          avatar: 'https://randomuser.me/api/portraits/women/27.jpg',
-          src: 'pablo-artifficial-intelligence.svg',
-          progress: 27,
-        },
-        {
-          title: 'Car Rental',
-          avatar: 'https://randomuser.me/api/portraits/men/40.jpg',
-          src: 'pablo-car-rental.svg',
-          progress: 40,
-        },
-      ],
+      entrepreneurs: Entrepreneurs['entrepreneurs'],
       categories: [
         'Arts', 'Agriculture', 'Education', 'Environment', 'Technology'
       ],
+      people: People['results'],
     }),
     methods: {
+      goTo(label) {
+        this.$router.push({
+          path: `/details/${label}`,
+          });
+      },
       async lendNow(id) {
         try {
           const body = { args: [id] }
