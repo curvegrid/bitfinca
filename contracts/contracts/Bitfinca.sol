@@ -18,6 +18,7 @@ contract Bitfinca {
     string name;
     address account;
     uint target;
+    uint creditScore; // on a scale of 0-800
   }
 
   struct Validator {
@@ -40,6 +41,7 @@ contract Bitfinca {
   mapping (address => uint256) public fundingTarget; // entrepreneur address => fundingTarget
   mapping(address => mapping(address => bool)) public businessToValidators; // businessID => Validator => approval
   mapping(address => uint) public businessValidatorCount; // businessID => validatorCount
+  mapping(uint => uint) public entrepreneurToCreditsScore; // id to credit score
 
   function addLender(string memory _name, address _account) public {
     require(lenderAddressToID[_account] == 0, "You have already registered to be a lender");
@@ -90,13 +92,26 @@ contract Bitfinca {
     require(validatorAddressToID[msg.sender] != 0, "validator must be registered"); // validator must be registered
     require(msg.sender != business, "validator cannot validate it's own business"); // validator != entrepreneur
 
+    uint entrepreneurID = entrepreneurAddressToID[business];
+
     if (approval) {
         businessValidatorCount[business] += 1;
+        if (entrepreneurToCreditsScore[entrepreneurID] == 0) {
+          entrepreneurToCreditsScore[entrepreneurID] = 690;
+        } else {
+          entrepreneurToCreditsScore[entrepreneurID] = entrepreneurToCreditsScore[entrepreneurID] + 50;
+        }
     }
     else {
         businessValidatorCount[business] -= 1;
+        if (entrepreneurToCreditsScore[entrepreneurID] == 0) {
+          entrepreneurToCreditsScore[entrepreneurID] = 400;
+        } else {
+          entrepreneurToCreditsScore[entrepreneurID] = entrepreneurToCreditsScore[entrepreneurID] - 50;
+        }
     }
     businessToValidators[business][msg.sender] = approval;
+
     Token(accountAddress).incrementBalance(msg.sender, 1); // placeholder for the nominal fee validators earn
 
     emit Validate(business, approval);
