@@ -7,22 +7,17 @@
  * More information about configuration can be found at:
  *
  * trufflesuite.com/docs/advanced/configuration
- *
- * To deploy via Infura you'll need a wallet provider (like @truffle/hdwallet-provider)
- * to sign your transactions before they're sent to a remote public node. Infura accounts
- * are available for free at: infura.io/register.
- *
- * You'll also need a mnemonic - the twelve word phrase the wallet uses to generate
- * public/private key pairs. If you're publishing your code to GitHub make sure you load this
- * phrase from a file you've .gitignored so it doesn't accidentally become public.
- *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
-// const infuraKey = "fj4jll3k.....";
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+// pull in environment variables, potentially from a .env file
+require('dotenv').config()
+
+const privateKey = process.env.BITFINCA_DEPLOYER_PRIVATE_KEY;
+const networkID = process.env.BITFINCA_NETWORK_ID;
+
+// For using MultiBaas proxy
+const { Provider } = require("truffle-multibaas-plugin");
+const MultiBaasDeploymentID = process.env.BITFINCA_MULTIBAAS_DEPLOYMENT_ID;
 
 module.exports = {
   /**
@@ -36,42 +31,18 @@ module.exports = {
    */
 
   networks: {
-    // Useful for testing. The `development` name is special - truffle uses it by default
-    // if it's defined here and no other network is specified at the command line.
-    // You should run a client (like ganache-cli, geth or parity) in a separate terminal
-    // tab if you use this network and you must also set the `host`, `port` and `network_id`
-    // options below to some value.
-    //
-    // development: {
-    //  host: "127.0.0.1",     // Localhost (default: none)
-    //  port: 8545,            // Standard Ethereum port (default: none)
-    //  network_id: "*",       // Any network (default: none)
-    // },
-    // Another network with more advanced options...
-    // advanced: {
-    // port: 8777,             // Custom port
-    // network_id: 1342,       // Custom network
-    // gas: 8500000,           // Gas sent with each transaction (default: ~6700000)
-    // gasPrice: 20000000000,  // 20 gwei (in wei) (default: 100 gwei)
-    // from: <address>,        // Account to send txs from (default: accounts[0])
-    // websockets: true        // Enable EventEmitter interface for web3 (default: false)
-    // },
-    // Useful for deploying to a public network.
-    // NB: It's important to wrap the provider as a function.
-    // ropsten: {
-    // provider: () => new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/YOUR-PROJECT-ID`),
-    // network_id: 3,       // Ropsten's id
-    // gas: 5500000,        // Ropsten has a lower block limit than mainnet
-    // confirmations: 2,    // # of confs to wait between deployments. (default: 0)
-    // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
-    // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
-    // },
-    // Useful for private networks
-    // private: {
-    // provider: () => new HDWalletProvider(mnemonic, `https://network.io`),
-    // network_id: 2111,   // This network is yours, in the cloud.
-    // production: true    // Treats this network as if it was a public net. (default: false)
-    // }
+    // This can be any name, not just "development". However, this is the default network name for Truffle.
+    development: {
+      // See https://github.com/trufflesuite/truffle/tree/develop/packages/hdwallet-provider
+      // for options other than the Deployment ID.
+      provider: new Provider(privateKey, MultiBaasDeploymentID),
+
+      network_id: networkID,
+
+      // these are both critical and otherwise set to weird defaults
+      gas: 8000000,   // Gas sent with each transaction (default: ~6700000)
+      gasPrice: 1,    // 1 wei (default: 100 gwei)
+    },
   },
 
   // Set default mocha options here, use special reporters etc.
@@ -82,15 +53,22 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      // version: "0.5.1",    // Fetch exact version from solc-bin (default: truffle's version)
-      // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-      // settings: {          // See the solidity docs for advice about optimization and evmVersion
-      //  optimizer: {
-      //    enabled: false,
-      //    runs: 200
-      //  },
-      //  evmVersion: "byzantium"
-      // }
+      settings: {
+        // this is important to help keep contracts under the 24 KB limit on smart contract size
+        optimizer: {
+          enabled: true,
+          runs: 200
+        }
+      }
     }
-  }
+  },
+
+  // MultiBaas deployment
+  multibaasDeployer: {
+    apiKeySource: "env", // specify "file" if you have a mb_plugin_api_key instead of an environment variable.
+    deploymentID: MultiBaasDeploymentID,
+    // Choose the list of networks we can allow updating address for a label.
+    // A definitive true/false also works, it will allow/block the action for all networks.
+    allowUpdateAddress: ["development"],
+  },
 };

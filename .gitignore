@@ -1,2 +1,8 @@
-.DS_Store
+# environment variables
+.env
+
+# npm and yarn
 node_modules
+
+# macOS
+.DS_Store

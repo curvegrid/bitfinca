@@ -12,12 +12,12 @@ Vue.use(cgutils);
 Vue.prototype.$BASE_URL = 'http://localhost:8080';
 
 // [REQUIRED: REPLACE ME] Server API key
-Vue.prototype.$API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2ZDA2ZGJkMi00ZDM3LTRkOGUtYTgyZS1hNjdiYWQ1YjZhZjgiLCJpYXQiOjE2MTIxNzIzNjYsInN1YiI6IjEifQ.Ls-tGBswZ_zg3JS-6zg46GyH_a3LRDrlBylkPYEpwKg';
+Vue.prototype.$API_KEY = '';
 
 // The deployed contract's address, or the label you assigned it in MultiBaas
 // [REQUIRED: REPLACE ME]
-Vue.prototype.$BITFINCA_CONTRACT = 'bitfinca5';
-Vue.prototype.$TOKEN_CONTRACT = 'fincatoken';
+Vue.prototype.$BITFINCA_CONTRACT = 'bitfinca';
+Vue.prototype.$TOKEN_CONTRACT = 'finca_token';
 
 // global variable
 Vue.prototype.$axios = axios;

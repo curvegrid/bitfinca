@@ -1,0 +1,21 @@
+{
+  "name": "bitfinca-contracts",
+  "version": "0.1.0",
+  "description": "Bitfinca Smart Contracts",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "lint": "solhint ./contracts/**/*.sol",
+    "prettier": "prettier --write ./contracts/**/*.sol"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "prettier": "^2.2.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.3",
+    "solhint": "^3.3.2",
+    "solhint-plugin-prettier": "^0.0.5",
+    "truffle-multibaas-plugin": "^0.1.5"
+  }
+}

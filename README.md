@@ -7,7 +7,7 @@
 2. **API Key**
     - You will also need to [provision an API key](https://www.curvegrid.com/docs/5-1-generate-api-keys/) with membership in the `DApp User` group.
 3. **Mlti Token Contract**
-    - You will need to [deploy a `Bitfinca` contract and a `Token` contract](https://www.curvegrid.com/docs/4-3-deploy-a-smart-contract/) and take note of their labels. 
+    - In the `contracts` folder, copy the `.sample-curvenet-env` file to `.env` and fill in all of the blank values. Ensure that the private key has sufficient ETH to fund gas for contract deployments and setup. We are using the [truffle-multibaas-plugin](https://github.com/curvegrid/truffle-multibaas-plugin) to automate contract deployment to the blockchain, and setup within MultiBaas. For example, `truffle build` will compile the smart contracts, and `truffle migrate --reset` will compile the smart contracts (if required), redeploy them to the blockchain, and reconfigure MultiBaas.
 4. **CORS Configuration**
     - Finally, you will need to update your CORS settings by going to `Admin` then `CORS Domains` and setting up the domain of the sample app. If you are running locally this will be `http://localhost:8080` by default.
 
@@ -15,5 +15,3 @@ After you have configured your deployment and smart contract, please fill out th
 
 - `BASE_URL`
 - `API_KEY`
-- `BITFINCA_CONTRACT` <- replace with your deployed Bitfinca contract label
-- `TOKEN_CONTRACT` <- replace with your deployed FincaToken contract label
