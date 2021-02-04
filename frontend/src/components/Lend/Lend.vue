@@ -128,9 +128,23 @@ export default {
           from: account,
           signer: account
         }
-        await this.axios.post(
+        const {
+          data: {
+            result: { tx, submitted },
+          },
+        } = await this.axios.post(
           `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/addLender`, body
         );
+
+        if (!submitted) {
+          // Get the signer from MetaMask
+          const signer = this.$root.$_web3.getSigner(tx.from);
+          // Format the transaction so that ethers.js can sign it
+          const ethersTx = this.$root.$_cgutils.formatEthersTx(tx);
+          // Submit the transaction to the blockchain
+          const txResponse = await signer.sendTransaction(ethersTx);
+          this.response = txResponse;
+        }
       } catch (err) {
         console.log(err);
       }
