@@ -26,8 +26,8 @@
               md="6">
               <v-text-field
                 v-model="name"
+                :rules="[rules.required, rules.counter]"
                 label="Applicant name"
-                required
               ></v-text-field>
               </v-col>
                <v-col cols="12"
@@ -35,17 +35,20 @@
               <v-text-field
                 v-model="initialDeposit"
                 label="Initial Deposit"
+                type=number
+                :rules="[rules.funding]"
                 required
               ></v-text-field>
               </v-col>
             </v-row>
              <v-row>
              <v-col cols="12"
-              md="11">
+              md="10">
               <v-text-field
                 v-model="walletAddress"
                 label="Wallet Address"
                 required
+                readonly
               ></v-text-field>
               </v-col>
               <v-spacer/><v-btn @click="addLender()" class="mt-10 ma-4 page-button">Submit</v-btn>
@@ -62,8 +65,8 @@
        Join a community of lenders
       </h1>
       <v-avatar
-        v-for="lender in lenders"
-        :key="lender"
+        v-for="(lender, i) in lenders"
+        :key="i"
         :current-avatar="lender"
         color="primary"
         size="128"
@@ -81,20 +84,53 @@ export default {
 
   data: () => ({
     name: '',
-    initialDeposit: 0,
+    initialDeposit: 100,
     walletAddress: null,
     lenders: null,
+    rules: {
+      required: value => !!value || 'Required.',
+      counter: value => value.length >= 2 || 'Min 2 characters',
+      funding: value => value >= 0 || 'Must be a positive amount',
+    },
   }),
-  created() {
-      Promise(this.fetchUsers());
+  async created() {
+    const Web3 = require('web3');
+     if (window.ethereum != null) { // true if user is using MetaMask
+      window.web3 = new Web3(window.ethereum);
+      await window.ethereum.enable();
+    }
+    this.connectToWeb3();
+    this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+    this.walletAddress = await this.getActiveAccount();
+    await this.fetchUsers();
   },
   methods: {
+    connectToWeb3() {
+      const web3Config = this.$root.$_cgutils.connectToWeb3(window.web3);
+      console.log("This web3config", web3Config);
+      this.$root.$_web3 = web3Config.provider;
+      this.$root.$_web3Available = web3Config.web3Available;
+    },
+    // Get the Eth Address currently selected in MetaMask
+    async getActiveAccount() {
+      const accounts = await this.$root.$_web3.listAccounts();
+      return accounts[0];
+    },
     async addLender() {
+      const account = await this.getActiveAccount();
+      console.log("This account", account);
       try {
-        const { data } = await this.$axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+        const body = {
+          args: [
+            this.name,
+            this.walletAddress
+          ],
+          from: account,
+          signer: account
+        }
+        await this.axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/addLender`, body
         );
-        this.response = data;
       } catch (err) {
         console.log(err);
       }

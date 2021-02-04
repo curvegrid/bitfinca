@@ -17,6 +17,8 @@ Vue.prototype.$API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2ZDA2Z
 // The deployed contract's address, or the label you assigned it in MultiBaas
 // [CAN BE REPLACED]
 Vue.prototype.$CONTRACT_LABEL_OR_ADDRESS = 'nodecimal';
+Vue.prototype.$BITFINCA_CONTRACT = 'bitfinca2';
+Vue.prototype.$TOKEN_CONTRACT = 'token';
 
 // global variable
 Vue.prototype.$axios = axios;

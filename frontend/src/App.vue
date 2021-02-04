@@ -315,49 +315,7 @@ export default {
         console.log(err);
       }
     },
-        async mintTokens() {
-      try {
-        const account = await this.getActiveAccount();
-        const jsonBody = {
-          args: [`${this.tokenAmount}`],
-          from: account,
-          signer: account,
-        };
-
-        const {
-          data: {
-            result: { tx, submitted },
-          },
-        } = await this.$axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/mint`,
-          jsonBody,
-        );
-
-        if (!submitted) {
-          // Get the signer from MetaMask
-          const signer = this.$root.$_web3.getSigner(tx.from);
-          // Format the transaction so that ethers.js can sign it
-          const ethersTx = this.$root.$_cgutils.formatEthersTx(tx);
-          // Submit the transaction to the blockchain
-          const txResponse = await signer.sendTransaction(ethersTx);
-          this.response = txResponse;
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    },
     /** DApp Sample End **/
-
-    changeColor() {
-      if (
-        document.body.scrollTop > 100 ||
-        document.documentElement.scrollTop > 100
-      ) {
-        this.bg = 'white';
-      } else {
-        this.bg = 'transparent';
-      }
-    },
   },
 };
 </script>

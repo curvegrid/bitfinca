@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Unlicensed
 
 pragma solidity >=0.4.22 <0.9.0;
-import "./Token.sol";
 
 contract Bitfinca {
   address public accountAddress;
@@ -16,7 +15,8 @@ contract Bitfinca {
   }
 
    struct Entrepreneur {
-    string name;
+    string founder;
+    string businessName;
     address account;
     uint target;
     uint creditScore; // on a scale of 0-800
@@ -69,7 +69,7 @@ contract Bitfinca {
   }
 
   function addLender(string memory _name, address _account) public {
-    require(lenders[_account].account != address(0), "You have already registered to be a lender");
+    require(lenders[_account].account == address(0), "You have already registered to be a lender");
     lenders[_account] = Lender({
         name: _name,
         account: _account,
@@ -78,9 +78,9 @@ contract Bitfinca {
     allLenders.push(_account);
   }
 
-  function addEntrepreneur(string memory _name, address _account, uint _target) public {
-    require(entrepreneurs[_account].account != address(0), "You have already registered your business");
-    entrepreneurs[_account] = Entrepreneur(_name,_account, _target, 690, true);
+  function addEntrepreneur(string memory _name, string memory _businessName, address _account, uint _target) public {
+    require(entrepreneurs[_account].account == address(0), "You have already registered your business");
+    entrepreneurs[_account] = Entrepreneur(_name, _businessName, _account, _target, 690, true);
     fundingTarget[_account] = _target;
     entrepreneurValidatorCount[_account] = 0; // set validator count to 0
     allEntrepreneurs.push(_account);
@@ -89,7 +89,7 @@ contract Bitfinca {
   }
 
   function addValidator(string memory _name, address _account) public {
-    require(validators[_account].account != address(0), "You have already registered to be a validator");
+    require(validators[_account].account == address(0), "You have already registered to be a validator");
     validators[_account] = Validator({
         name: _name,
         account: _account,
@@ -133,8 +133,6 @@ contract Bitfinca {
         }
     }
     entrepreneurToValidators[business][msg.sender] = approval;
-
-    Token(accountAddress).incrementBalance(msg.sender, 1); // placeholder for the nominal fee validators earn
 
     emit Validate(business, approval);
   }
