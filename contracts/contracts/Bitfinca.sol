@@ -40,7 +40,9 @@ contract Bitfinca {
   address[] public allValidators;
 
   /* Events */
-  event NewEntrepreneur(string name, address account);
+  event NewEntrepreneur(string founder, string businessName, address account, uint target, uint creditScore);
+  event NewLender(string name, address account);
+  event NewValidator(string name, address account);
   event Validate(address business, bool approval);
 
   /* Mappings */
@@ -68,6 +70,10 @@ contract Bitfinca {
     _;
   }
 
+  /* constants */
+  uint constant defaultCreditScore = 690;
+
+  /* methods */
   function addLender(string memory _name, address _account) public {
     require(lenders[_account].account == address(0), "You have already registered to be a lender");
     lenders[_account] = Lender({
@@ -76,16 +82,17 @@ contract Bitfinca {
         valid: true
     });
     allLenders.push(_account);
+    emit NewLender(_name, _account);
   }
 
   function addEntrepreneur(string memory _name, string memory _businessName, address _account, uint _target) public {
     require(entrepreneurs[_account].account == address(0), "You have already registered your business");
-    entrepreneurs[_account] = Entrepreneur(_name, _businessName, _account, _target, 690, true);
+    entrepreneurs[_account] = Entrepreneur(_name, _businessName, _account, _target, defaultCreditScore, true);
     fundingTarget[_account] = _target;
     entrepreneurValidatorCount[_account] = 0; // set validator count to 0
     allEntrepreneurs.push(_account);
 
-    emit NewEntrepreneur(_name, _account);
+    emit NewEntrepreneur(_name, _businessName, _account, _target, defaultCreditScore);
   }
 
   function addValidator(string memory _name, address _account) public {
@@ -96,6 +103,7 @@ contract Bitfinca {
         valid: true
     });
     allValidators.push(_account);
+    emit NewValidator(_name, _account);
   }
 
   /* Entrepreneur */
