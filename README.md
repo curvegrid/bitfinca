@@ -15,5 +15,5 @@ After you have configured your deployment and smart contract, please fill out th
 
 - `BASE_URL`
 - `API_KEY`
-- `BITFINCA_CONTRACT`
-- `TOKEN_CONTRACT`
+- `BITFINCA_CONTRACT` <- replace with your deployed Bitfinca contract label
+- `TOKEN_CONTRACT` <- replace with your deployed FincaToken contract label
