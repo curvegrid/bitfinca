@@ -38,10 +38,10 @@
                cols="7"
               md="6"
               >
-                <h2 class="aligh-left page-header-one">Education for All</h2>
+                <h2 class="aligh-left page-header-one">{{ businessName }}</h2>
                 <p class="body-text">Information about my business</p>
                 <v-spacer/>
-                  10% funded
+                  10% funded out of ${{ fundingTarget }}
                   <v-progress-linear
                     value="10"
                     height="12"
@@ -51,6 +51,23 @@
               </v-col>
             </v-row>
             <v-divider/>
+            <v-card color=transparent elevation=0>
+              <v-card-title class="page-header-one">
+                About me <v-spacer/>
+                <!-- <v-avatar><v-img :src="personData.picture.large" /></v-avatar> -->
+              </v-card-title>
+              <v-card-text class=body-text>
+                <v-row>
+                  <v-col>
+                    {{ founderName}}
+                  <!-- <p><strong>{{personData.name.first}} {{personData.name.last}}</strong> {{personData.location.city}}, {{personData.location.country}}</p> -->
+                  </v-col>
+                  <v-col>
+                  <!-- <p>Contact: {{personData.email}}</p> -->
+                  </v-col>
+                </v-row>
+                </v-card-text>
+            </v-card>
               <v-timeline
                 align-top
                 :dense="$vuetify.breakpoint.smAndDown"
@@ -121,8 +138,8 @@
                 <v-card-title class=page-header-one>My Lenders</v-card-title>
                 <v-card-text>
                   <v-avatar
-                    v-for="lender in lenders"
-                    :key="lender"
+                    v-for="(lender, i) in lenders"
+                    :key="i"
                     :current-avatar="lender"
                     color="primary"
                     size="50"
@@ -136,8 +153,8 @@
                 <v-card-title class=page-header-one>My Validators</v-card-title>
                 <v-card-text>
                   <v-avatar
-                    v-for="v in validators"
-                    :key="v"
+                    v-for="(v, vi) in validators"
+                    :key="vi"
                     :current-avatar="v"
                     color="primary"
                     size="50"
@@ -179,6 +196,11 @@
       },
     },
     data: () => ({
+      businessName: "Education for All",
+      founderName: "Lisa",
+      fundingTarget: 2000,
+      creditScore: 690,
+      account: null,
       updates: [
         {
           title: 'Product Launch',
@@ -203,17 +225,59 @@
       ],
       requestAmount: 0,
       updateTotalNeed: 0,
+      lenders: [],
+      validators: [],
     }),
-    created() {
-      Promise(this.fetchUsers(Math.random()*20+3, Math.random()*20+1));
+    async created() {
+      // If MetaMask's privacy mode is enabled, we must get the user's permission
+      // in order to be able to access their signers
+      const Web3 = require('web3');
+      if (window.ethereum != null) { // true if user is using MetaMask
+        window.web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
+      }
+      this.connectToWeb3();
+      this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+      this.account = await this.getActiveAccount();
+      await this.fetchUsers(Math.random()*20+3, Math.random()*20+2);
+      await this.updateVariables();
+      console.log(this.account);
     },
     methods: {
+      connectToWeb3() {
+        const web3Config = this.$root.$_cgutils.connectToWeb3(window.web3);
+        this.$root.$_web3 = web3Config.provider;
+        this.$root.$_web3Available = web3Config.web3Available;
+      },
+      // Get the Eth Address currently selected in MetaMask
+      async getActiveAccount() {
+        const accounts = await this.$root.$_web3.listAccounts();
+        return accounts[0];
+      },
+      async updateVariables() {
+        try {
+          const body = {
+            args: [this.account],
+            from: this.account,
+          }
+          const { data } = await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`, body,
+          );
+          const response = data.result.output;
+          this.founderName = response[0];
+          this.businessName = response[1];
+          this.fundingTarget = response[3];
+          this.creditScore = response[4];
+        } catch (err) {
+            console.log(err);
+        }
+      },
       async requestFunds() {
         try {
-        const { data } = await this.$axios.post(
+        const { data } = await this.axios.post(
           `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
         );
-          this.response = data;
+          this.response = data.result.output;
         } catch (err) {
           console.log(err);
         }

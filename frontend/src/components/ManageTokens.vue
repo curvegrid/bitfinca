@@ -25,7 +25,7 @@
               </v-col>
               <v-col>
                 <h2 class="aligh-left page-header-one">Account Overview</h2>
-                <p class="body-text">Token Balance: </p>
+                <p class="body-text">Token Balance: {{ tokenBalance }}</p>
               </v-col>
             </v-row>
             <v-divider/>
@@ -138,7 +138,9 @@
 <script>
   export default {
     data: () => ({
+      account: null,
       total: -1,
+      tokenBalance: -1,
       transactions: [],
       items: [],
       depositAmount: 0,
@@ -153,15 +155,32 @@
     async created() {
       // If MetaMask's privacy mode is enabled, we must get the user's permission
       // in order to be able to access their signers
+      const Web3 = require('web3');
       if (window.ethereum != null) { // true if user is using MetaMask
+        window.web3 = new Web3(window.ethereum);
         await window.ethereum.enable();
       }
+      this.connectToWeb3();
       this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+      this.account = await this.getActiveAccount();
+      console.log("Account", this.account);
       const gtotal = this.getTotalTokens();
       const gTrans = this.getTransactions();
-      Promise.all([gtotal, gTrans]).then(this.makeModel());
+      const gBalance = this.getTokenBalance();
+      Promise.all([gtotal, gTrans, gBalance]).then(this.makeModel());
     },
     methods: {
+      connectToWeb3() {
+        const web3Config = this.$root.$_cgutils.connectToWeb3(window.web3);
+        console.log("This web3config", web3Config);
+        this.$root.$_web3 = web3Config.provider;
+        this.$root.$_web3Available = web3Config.web3Available;
+      },
+      // Get the Eth Address currently selected in MetaMask
+      async getActiveAccount() {
+        const accounts = await this.$root.$_web3.listAccounts();
+        return accounts[0];
+      },
       async getTotalTokens() {
         try {
         const { data } = await this.axios.post(
@@ -190,6 +209,20 @@
             methodName: t.transaction.method.name,
             value: t.transaction.method.inputs[0].value,
           })
+        }
+      },
+      async getTokenBalance() {
+        try {
+          const body = {
+            args: [ this.account ],
+            from: this.account,
+          }
+          const { data } = await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/fincatoken/methods/balanceOf`, body,
+          );
+            this.tokenBalance = data.result.output;
+        } catch (err) {
+          console.log(err);
         }
       },
       makeModel() {
