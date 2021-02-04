@@ -70,7 +70,7 @@ export default {
     walletAddress: null,
     rules: {
       required: value => !!value || 'Required.',
-      counter: value => value >= 2 || 'Min 2 characters',
+      counter: value => value.length >= 2 || 'Min 2 characters',
       funding: value => value > 0 || 'Must be a positive amount',
     },
   }),
@@ -110,6 +110,7 @@ export default {
           `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/addEntrepreneur`, body
         );
         this.response = data;
+        console.log(data);
       } catch (err) {
         console.log(err);
       }

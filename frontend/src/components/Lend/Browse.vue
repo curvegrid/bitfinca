@@ -106,7 +106,7 @@ import People from '../../assets/People.json'
         try {
           const body = { args: [id] }
           const { data } = await this.$axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$CONTRACT_LABEL_OR_ADDRESS}/contracts/mltitoken/methods/totalSupply`, // fix this
+            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/mltitoken/methods/totalSupply`, // fix this
             body
           );
         this.response = data;
