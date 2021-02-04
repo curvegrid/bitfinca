@@ -287,11 +287,6 @@ export default {
     this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
   },
   /** DApp Sample End **/
-  mounted() {
-    window.onscroll = () => {
-      this.changeColor();
-    };
-  },
   methods: {
     /** DApp Sample **/
     // We must init the web3 provider so that we can sign transactions
