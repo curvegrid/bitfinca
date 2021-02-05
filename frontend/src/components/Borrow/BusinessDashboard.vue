@@ -41,7 +41,7 @@
                 <h2 class="aligh-left page-header-one">{{ businessName }}</h2>
                 <p class="body-text">Information about my business</p>
                 <v-spacer/>
-                  10% funded out of ${{ fundingTarget }}
+                  <p class=body-text>10% funded out of ${{ fundingTarget }}</p>
                   <v-progress-linear
                     value="10"
                     height="12"
@@ -59,11 +59,10 @@
               <v-card-text class=body-text>
                 <v-row>
                   <v-col>
-                    {{ founderName}}
-                  <!-- <p><strong>{{personData.name.first}} {{personData.name.last}}</strong> {{personData.location.city}}, {{personData.location.country}}</p> -->
+                  <p><strong>{{firstName}} {{personData.name.last}}</strong> {{personData.location.city}}, {{personData.location.country}}</p>
                   </v-col>
                   <v-col>
-                  <!-- <p>Contact: {{personData.email}}</p> -->
+                  <p>Contact: {{personData.email}}</p>
                   </v-col>
                 </v-row>
                 </v-card-text>
@@ -121,13 +120,18 @@
             </v-container>
 
             <v-container>
-              <v-card>
+              <v-card elevation=0>
                 <v-card-text>
                   <v-text-field
                     :v-model="requestAmount"
                     label="Amount"
                   />
                   <v-btn @click="updateTotalNeed()" class="page-button">Update Total Need</v-btn>
+                </v-card-text>
+              </v-card>
+              <v-card>
+                <v-card-text>
+                   {{ loanAmount }}<v-btn @click="approve()" class="lend-button">Approve BitFinca</v-btn>
                 </v-card-text>
               </v-card>
             </v-container>
@@ -184,6 +188,8 @@
 </template>
 
 <script>
+  import 'dotenv'
+
   export default {
     props: {
       create: {
@@ -197,7 +203,20 @@
     },
     data: () => ({
       businessName: "Education for All",
-      founderName: "Lisa",
+      firstName: "Alicia",
+      personData: {
+        name: {
+          last: "Nieto"
+        },
+        location: {
+          city: "Barcelona",
+          country: "Spain",
+        },
+        email: "alicia.nieto@example.com",
+        picture: {
+          large: "https://randomuser.me/api/portraits/women/17.jpg"
+        }
+      },
       fundingTarget: 2000,
       creditScore: 690,
       account: null,
@@ -228,6 +247,11 @@
       lenders: [],
       validators: [],
     }),
+    computed: {
+      loanAmount() {
+        return this.fundingTarget;
+      }
+    },
     async created() {
       // If MetaMask's privacy mode is enabled, we must get the user's permission
       // in order to be able to access their signers
@@ -241,7 +265,6 @@
       this.account = await this.getActiveAccount();
       await this.fetchUsers(Math.random()*20+3, Math.random()*20+2);
       await this.updateVariables();
-      console.log(this.account);
     },
     methods: {
       connectToWeb3() {
@@ -264,7 +287,7 @@
             `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`, body,
           );
           const response = data.result.output;
-          this.founderName = response[0];
+          this.firstName = response[0];
           this.businessName = response[1];
           this.fundingTarget = response[3];
           this.creditScore = response[4];
@@ -276,6 +299,23 @@
         try {
         const { data } = await this.axios.post(
           `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+        );
+          this.response = data.result.output;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+      async approve() {
+        try {
+          const body = {
+            args: [
+              process.env.$BITFINCA_ADDRESS,
+              this.loanValue,
+            ],
+            from: this.account
+            }
+        const { data } = await this.axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/approve`, body,
         );
           this.response = data.result.output;
         } catch (err) {
@@ -309,7 +349,15 @@
         }
         });
         this.validators = vResponse.data.results;
+        this.personData = await this.$axios.get('https://randomuser.me/api/', {
+          params: {
+            seed: this.firstName,
+            results: 1,
+            inc: 'name,picture,location'
+          }
+        });
       },
+
     }
   }
 </script>

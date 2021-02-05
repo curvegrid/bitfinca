@@ -96,7 +96,27 @@ import People from '../../assets/People.json'
       ],
       people: People['results'],
     }),
+    async created() {
+      const Web3 = require('web3');
+      if (window.ethereum != null) { // true if user is using MetaMask
+        window.web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
+      }
+      this.connectToWeb3();
+      this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+      this.walletAddress = await this.getActiveAccount();
+    },
     methods: {
+      connectToWeb3() {
+      const web3Config = this.$root.$_cgutils.connectToWeb3(window.web3);
+      this.$root.$_web3 = web3Config.provider;
+      this.$root.$_web3Available = web3Config.web3Available;
+      },
+      // Get the Eth Address currently selected in MetaMask
+      async getActiveAccount() {
+        const accounts = await this.$root.$_web3.listAccounts();
+        return accounts[0];
+      },
       goTo(label) {
         this.$router.push({
           path: `/details/${label}`,
@@ -105,7 +125,7 @@ import People from '../../assets/People.json'
       async lendNow(id) {
         try {
           const body = { args: [id] }
-          const { data } = await this.$axios.post(
+          const { data } = await this.axios.post(
             `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/mltitoken/methods/totalSupply`, // fix this
             body
           );

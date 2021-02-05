@@ -107,7 +107,6 @@ export default {
   methods: {
     connectToWeb3() {
       const web3Config = this.$root.$_cgutils.connectToWeb3(window.web3);
-      console.log("This web3config", web3Config);
       this.$root.$_web3 = web3Config.provider;
       this.$root.$_web3Available = web3Config.web3Available;
     },
@@ -118,7 +117,6 @@ export default {
     },
     async addLender() {
       const account = await this.getActiveAccount();
-      console.log("This account", account);
       try {
         const body = {
           args: [

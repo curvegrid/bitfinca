@@ -46,6 +46,22 @@
                     color="#B6509E">
                 </v-progress-linear>
               </v-card-text>
+              <v-card-actions>
+                <v-row>
+                  <v-col
+                    md=7>
+                    <v-text-field
+                      label="Loan Amount"
+                      type=number
+                      v-model="lendAmount"
+                      suffix= "Tokens"
+                    />
+                  </v-col>
+                  <v-col>
+                    <v-btn class="mb-4 lend-button" @click="lendNow(i)">Lend now</v-btn>
+                  </v-col>
+                </v-row>
+              </v-card-actions>
               </v-card>
 
               </v-col>
@@ -180,6 +196,7 @@ import People from '../../assets/People.json'
       name: 'Some Business',
       description: 'Information about some business',
       progress: 0,
+      lendAmount: 5,
       image: 'icons/clip-order-complete-1.png',
       lenders: null,
       validators: null,
@@ -212,6 +229,16 @@ import People from '../../assets/People.json'
       Promise(this.fetchUsers(Math.random()*20+3, Math.random()*20+2));
     },
     methods: {
+      connectToWeb3() {
+      const web3Config = this.$root.$_cgutils.connectToWeb3(window.web3);
+      this.$root.$_web3 = web3Config.provider;
+      this.$root.$_web3Available = web3Config.web3Available;
+      },
+      // Get the Eth Address currently selected in MetaMask
+      async getActiveAccount() {
+        const accounts = await this.$root.$_web3.listAccounts();
+        return accounts[0];
+      },
       updateVariables() {
         const entrepreneur = Entrepreneurs['entrepreneurs'][this.id];
         this.name = entrepreneur.title;
@@ -219,6 +246,18 @@ import People from '../../assets/People.json'
         this.progress = entrepreneur.progress;
         this.image = 'entrepreneurs/'+ entrepreneur.src;
         this.personData = People['results'][entrepreneur.id]
+      },
+      async lendNow(id) {
+        try {
+          const body = { args: [id] }
+          const { data } = await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/mltitoken/methods/totalSupply`, // fix this
+            body
+          );
+        this.response = data;
+      } catch (err) {
+        console.log(err);
+      }
       },
       async fetchUsers(numLenders, numValidators) {
         const lResponse = await this.$axios.get('https://randomuser.me/api/', {

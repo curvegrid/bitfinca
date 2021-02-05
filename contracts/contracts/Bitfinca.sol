@@ -33,6 +33,7 @@ contract Bitfinca {
   mapping(address => Lender) public lenders;
   mapping(address => Entrepreneur) public entrepreneurs;
   mapping(address => Validator) public validators;
+  mapping(address => bool) public registeredUser;
 
   /* RETRIEVING */
   address[] public allLenders;
@@ -55,18 +56,21 @@ contract Bitfinca {
   modifier checkValidLender(address _account) {
     require(lenders[_account].account != address(0));
     require(lenders[_account].valid);
+    require(registeredUser[_account]);
     _;
   }
 
   modifier checkValidEntrepreneur(address _account) {
     require(entrepreneurs[_account].account != address(0));
     require(entrepreneurs[_account].valid);
+    require(registeredUser[_account]);
     _;
   }
 
   modifier checkValidValidator(address _account) {
     require(validators[_account].account != address(0));
     require(validators[_account].valid);
+    require(registeredUser[_account]);
     _;
   }
 
@@ -82,6 +86,7 @@ contract Bitfinca {
         valid: true
     });
     allLenders.push(_account);
+    registeredUser[_account] = true;
     emit NewLender(_name, _account);
   }
 
@@ -91,6 +96,7 @@ contract Bitfinca {
     fundingTarget[_account] = _target;
     entrepreneurValidatorCount[_account] = 0; // set validator count to 0
     allEntrepreneurs.push(_account);
+    registeredUser[_account] = true;
 
     emit NewEntrepreneur(_name, _businessName, _account, _target, defaultCreditScore);
   }
@@ -103,6 +109,7 @@ contract Bitfinca {
         valid: true
     });
     allValidators.push(_account);
+    registeredUser[_account] = true;
     emit NewValidator(_name, _account);
   }
 
