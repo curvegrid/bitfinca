@@ -1,5 +1,6 @@
 # environment variables
 .env
+.env_curvenet
 
 # npm and yarn
 node_modules
