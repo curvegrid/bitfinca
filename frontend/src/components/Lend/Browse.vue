@@ -107,7 +107,6 @@ import People from '../../assets/People.json'
       this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
       this.walletAddress = await this.getActiveAccount();
       this.allEntrepreneurs = await this.getEntrepreneurs();
-      console.log("BaseUrl", this.$BASE_URL);
     },
     methods: {
       connectToWeb3() {
@@ -132,11 +131,21 @@ import People from '../../assets/People.json'
             `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/totalEntrepreneurs`,
             body
           );
-        this.response = data;
-        console.log(this.response);
+        this.allEntrepreneurs = data.result.output;
       } catch (err) {
         console.log(err);
       }
+      try {
+          const body = { args: [], from: this.walletAddress }
+          const { data } = await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/totalEntrepreneurs`,
+            body
+          );
+        this.allEntrepreneurs = data.result.output;
+      } catch (err) {
+        console.log(err);
+      }
+
       },
       async lendNow(id) {
         try {
