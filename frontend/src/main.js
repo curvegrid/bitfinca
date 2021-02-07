@@ -9,7 +9,7 @@ import cgutils from './js/cgutils';
 Vue.use(cgutils);
 
 // [REQUIRED: REPLACE ME] Server URL
-Vue.prototype.$BASE_URL = process.env.VUE_APP_MB_BASE_URL;
+Vue.prototype.$BASE_URL =  process.env.VUE_APP_MB_BASE_URL;
 
 // [REQUIRED: REPLACE ME] Server API key
 Vue.prototype.$API_KEY = process.env.VUE_APP_MB_API_KEY;
