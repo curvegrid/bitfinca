@@ -1,1 +1,5 @@
+# alternative permissions
+permissions.txt
+
+# build artifacts
 build/*
