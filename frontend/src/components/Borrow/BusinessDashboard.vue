@@ -298,7 +298,7 @@
       async requestFunds() {
         try {
         const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`, // TODO fix this
         );
           this.response = data.result.output;
         } catch (err) {
@@ -307,17 +307,39 @@
       },
       async approve() {
         try {
+          // retrieve the Bitfinca address
+          const {
+            data: {
+              result: { address },
+            },
+          } = await this.axios.get(
+            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}`, body,
+          );
+
+          // call approve
           const body = {
             args: [
-              process.env.$BITFINCA_ADDRESS,
-              this.loanValue,
-            ],
+                address,
+                this.loanAmount,
+              ],
             from: this.account
-            }
-        const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/approve`, body,
-        );
-          this.response = data.result.output;
+          }
+          const {
+            data: {
+              result: { tx, submitted },
+            },
+          } = await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/approve`, body,
+          );
+          if (!submitted) {
+            // Get the signer from MetaMask
+            const signer = this.$root.$_web3.getSigner(tx.from);
+            // Format the transaction so that ethers.js can sign it
+            const ethersTx = this.$root.$_cgutils.formatEthersTx(tx);
+            // Submit the transaction to the blockchain
+            const txResponse = await signer.sendTransaction(ethersTx);
+            this.response = txResponse;
+          }
         } catch (err) {
           console.log(err);
         }
@@ -325,7 +347,7 @@
       async updateNeed() {
         try {
         const { data } = await this.$axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`, // TODO fix this
         );
           this.response = data;
         } catch (err) {
