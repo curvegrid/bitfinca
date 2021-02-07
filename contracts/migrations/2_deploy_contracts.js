@@ -59,7 +59,7 @@ module.exports = async function(_deployer, network) {
    fincaToken.mint("0x687b5480B2BB9E24bbb15975e801A212869c19DB", 22);
    fincaToken.mint("0x0fA061a18D1A821cdfB1A1fAaB3425c17faeEa53", 80);
    fincaToken.mint("0xb5eD4b29faE5813f9Bd0FE211cb1109a669681f1", 38);
-   fincaToken.mint("54", "assessibility", "0xeAb807e0a3850a12b6e5850A6cAC8133Fe26ccE4", 2000);
+   fincaToken.mint("0xeAb807e0a3850a12b6e5850A6cAC8133Fe26ccE4", 150);
    fincaToken.mint("0x8da0239Ad91eF329bb837f5b56Bf51CDBfE58039", 10);
    fincaToken.mint("0xD84D552B2123a28b86851d5EDd5223B9A61a2C14", 13);
    fincaToken.mint("0x0D53BF7d7B3a98Ff7eaeEa5F4a739FC23fF010F6", 12);
