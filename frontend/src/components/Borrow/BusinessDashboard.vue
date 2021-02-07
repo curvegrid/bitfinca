@@ -298,7 +298,7 @@
       async requestFunds() {
         try {
         const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`, // TODO fix this
         );
           this.response = data.result.output;
         } catch (err) {
@@ -347,7 +347,7 @@
       async updateNeed() {
         try {
         const { data } = await this.$axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/mltitoken/methods/totalSupply`, // TODO fix this
+          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`, // TODO fix this
         );
           this.response = data;
         } catch (err) {
