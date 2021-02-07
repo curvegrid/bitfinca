@@ -166,9 +166,14 @@ import Entrepreneurs  from '../../assets/DummyData.json';
       },
       async validate(account) {
         try {
-          const body = { args: [account, this.approval], from: this.walletAddress, signer: this.walletAddress };
+          let body = { args: [account, this.approval], from: this.walletAddress, signer: this.walletAddress };
           await this.axios.post(
             `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/validate`,
+            body
+          );
+          body = { args: [account, 1], from: this.walletAddress, signer: this.walletAddress };
+          await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/incrementBalance`,
             body
           );
       } catch (err) {

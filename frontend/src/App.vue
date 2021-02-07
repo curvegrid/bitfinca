@@ -314,8 +314,7 @@ export default {
           }
         });
       this.userData = response.data.results[0];
-    }
-
+    },
   },
 };
 </script>

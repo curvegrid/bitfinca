@@ -26,6 +26,20 @@
               <v-col>
                 <h2 class="aligh-left page-header-one">Account Overview</h2>
                 <p class="body-text">Token Balance: {{ tokenBalance }}</p>
+              <v-card-title class="page-header-one">
+                About me <v-spacer/>
+                <v-avatar><v-img :src="userData.picture.large" /></v-avatar>
+              </v-card-title>
+              <v-card-text class=body-text>
+                <v-row>
+                  <v-col>
+                  <p><strong>{{userData.name.first}} {{userData.name.last}}</strong> {{userData.location.city}}, {{userData.location.country}}</p>
+                  </v-col>
+                  <v-col>
+                  <p>Contact: {{userData.email}}</p>
+                  </v-col>
+                </v-row>
+                </v-card-text>
               </v-col>
             </v-row>
             <v-divider/>
@@ -146,10 +160,23 @@
       depositAmount: 0,
       withdrawAmount: 0,
       headers: [],
+      userData: {},
       payments: [
         {
-          name: 'Lender 1', amount: '5000',
-        }
+          name: 'Lender 1', amount: '210',
+        },
+        {
+          name: 'Lender 2', amount: '20',
+        },
+        {
+          name: 'Lender 3', amount: '240',
+        },
+        {
+          name: 'Lender 4', amount: '120',
+        },
+        {
+          name: 'Lender 5', amount: '80',
+        },
       ],
     }),
     async created() {
@@ -168,6 +195,7 @@
       const gTrans = this.getTransactions();
       const gBalance = this.getTokenBalance();
       Promise.all([gtotal, gTrans, gBalance]).then(this.makeModel());
+      await this.getUser();
     },
     methods: {
       connectToWeb3() {
@@ -250,7 +278,17 @@
       },
       withdraw() {
         console.log("Withdraw", this.withdrawAmount);
-      }
+      },
+      async getUser() {
+      const response = await this.$axios.get('https://randomuser.me/api/', {
+          params: {
+            seed: this.account,
+            results: 1,
+            inc: 'name,picture,location, email'
+          }
+        });
+      this.userData = response.data.results[0];
+    },
     }
   }
 </script>
