@@ -21,7 +21,7 @@ Vue.prototype.$TOKEN_CONTRACT = 'finca_token';
 
 // global variable
 Vue.prototype.$axios = axios;
-Vue.prototype.$BITFINCA_ADDRESS = process.env.variable
+Vue.prototype.$BITFINCA_ADDRESS = process.env.BITFINCA_ADDRESS;
 
 Vue.config.productionTip = false
 

@@ -53,22 +53,22 @@
                 >
                   <v-card>
                     <v-card-title class=body-text>
-                      {{ e.title }}
+                      {{ e.business.title }}
                       <v-spacer/>
-                      <v-avatar><img :src="people[e.id].picture.large"></v-avatar>
+                      <v-avatar><img :src="e.person.picture.large"></v-avatar>
                     </v-card-title>
                     <v-card-text>
-                      <img height=150 :src="(require(`../../assets/entrepreneurs/${e.src}`))"/>
-                      {{ e.progress }}% funded
+                      <img height=150 :src="(require(`../../assets/entrepreneurs/${e.business.src}`))"/>
+                      {{ e.business.progress }}% funded
                       <v-progress-linear
-                        :value="e.progress"
+                        :value="e.business.progress"
                         height="12"
                         rounded
                         color="#B6509E">
                       </v-progress-linear>
                     </v-card-text>
                     <v-card-actions>
-                      <v-btn @click="goTo(i)" class="page-button">Learn more</v-btn>
+                      <v-btn @click="goTo(e.business.key, e.business.account)" class="page-button">Learn more</v-btn>
                       <v-spacer/>
                       <v-btn class="lend-button" @click="lendNow(i)">Lend now</v-btn>
                     </v-card-actions>
@@ -86,16 +86,15 @@
 
 <script>
 import Entrepreneurs  from '../../assets/DummyData.json';
-import People from '../../assets/People.json'
 
   export default {
     data: () => ({
-      entrepreneurs: Entrepreneurs['entrepreneurs'],
+      entrepreneurs: [],
       allEntrepreneurs: [],
+      dummyData: Entrepreneurs['entrepreneurs'],
       categories: [
         'Arts', 'Agriculture', 'Education', 'Environment', 'Technology'
       ],
-      people: People['results'],
     }),
     async created() {
       const Web3 = require('web3');
@@ -119,9 +118,9 @@ import People from '../../assets/People.json'
         const accounts = await this.$root.$_web3.listAccounts();
         return accounts[0];
       },
-      goTo(label) {
+      goTo(id, account) {
         this.$router.push({
-          path: `/details/${label}`,
+          path: `/details/${id}/${account}`,
           });
       },
       async getEntrepreneurs() {
@@ -136,25 +135,41 @@ import People from '../../assets/People.json'
         console.log(err);
       }
       try {
-          const body = { args: [], from: this.walletAddress }
+        const entrepreneurs = [];
+        for (const e in this.allEntrepreneurs) {
+          const body = { args: [this.allEntrepreneurs[e]] }
           const { data } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/totalEntrepreneurs`,
-            body
-          );
-        this.allEntrepreneurs = data.result.output;
+          `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`,
+          body
+        );
+          entrepreneurs.push(data.result.output);
+        }
+        this.allEntrepreneurs = entrepreneurs;
       } catch (err) {
         console.log(err);
       }
-
+        for (const e in this.allEntrepreneurs) {
+          const { data } = await this.$axios.get('https://randomuser.me/api/', {
+          params: {
+            seed: this.allEntrepreneurs[e][2], // address
+            results: 1,
+            inc: 'name,picture,location'
+          }
+          });
+          const person = data.results[0];
+          const business = this.dummyData[this.allEntrepreneurs[e][1]];
+          business['account'] = this.allEntrepreneurs[e][2];
+          business['key'] = this.allEntrepreneurs[e][1];
+          this.entrepreneurs.push({person: person, business: business});
+        }
       },
-      async lendNow(id) {
+      async lendNow() {
         try {
-          const body = { args: [id] }
-          const { data } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`, // fix this
+          const body = { args: [this.$BITFINCA_ADDRESS, 5], from: this.walletAddress, signer: this.walletAddress };
+          await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/transfer`,
             body
           );
-        this.response = data;
       } catch (err) {
         console.log(err);
       }

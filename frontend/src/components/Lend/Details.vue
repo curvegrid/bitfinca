@@ -35,6 +35,8 @@
                 </v-card-title>
               <v-card-text>
                 <p class="body-text">{{ description }}</p>
+                <p class=body-text style="font-size: 18px;"><strong>Target: </strong> {{target}}</p>
+                <p class=body-text style="font-size: 18px;"><strong>Credit Score: </strong> {{creditScore}}</p>
               </v-card-text>
               <v-spacer/>
               <v-card-text>
@@ -53,7 +55,7 @@
                     <v-text-field
                       label="Loan Amount"
                       type=number
-                      v-model="lendAmount"
+                      v-model="loanAmount"
                       suffix= "Tokens"
                     />
                   </v-col>
@@ -129,8 +131,8 @@
                 <v-card-title class=page-header-one>Lenders</v-card-title>
                 <v-card-text>
                   <v-avatar
-                    v-for="lender in lenders"
-                    :key="lender"
+                    v-for="(lender, i) in lenders"
+                    :key="i"
                     :current-avatar="lender"
                     color="primary"
                     size="50"
@@ -161,7 +163,9 @@
               <v-card >
                 <v-card-title class=page-header-one>Documentation</v-card-title>
                   <v-card-text>
-                    Data data data
+                    <a><p>Financial Documents</p></a>
+                    <a><p>Business Registration</p></a>
+                    <a><p>Detailed Business Plan</p></a>
                   </v-card-text>
                 </v-card>
             </v-container>
@@ -175,7 +179,6 @@
 
 <script>
 import Entrepreneurs  from '../../assets/DummyData.json';
-import People from '../../assets/People.json'
 
   export default {
     props: {
@@ -184,6 +187,10 @@ import People from '../../assets/People.json'
         default: false,
       },
       id: {
+        type: String,
+        default: '-1',
+      },
+      account: {
         type: String,
         default: '-1',
       },
@@ -196,11 +203,14 @@ import People from '../../assets/People.json'
       name: 'Some Business',
       description: 'Information about some business',
       progress: 0,
-      lendAmount: 5,
+      loanAmount: 5,
+      target: 0,
+      creditScore: 650,
       image: 'icons/clip-order-complete-1.png',
       lenders: null,
       validators: null,
       personData: null,
+      walletAddress: null,
       updates: [
         {
           title: 'Product Launch',
@@ -224,9 +234,17 @@ import People from '../../assets/People.json'
         },
       ],
     }),
-    created() {
-      this.updateVariables();
-      Promise(this.fetchUsers(Math.random()*20+3, Math.random()*20+2));
+    async created() {
+      const Web3 = require('web3');
+      if (window.ethereum != null) { // true if user is using MetaMask
+        window.web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
+      }
+      this.connectToWeb3();
+      this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+      this.walletAddress = await this.getActiveAccount();
+      await this.updateVariables();
+      await this.fetchUsers(Math.random()*20+3, Math.random()*20+2);
     },
     methods: {
       connectToWeb3() {
@@ -239,22 +257,34 @@ import People from '../../assets/People.json'
         const accounts = await this.$root.$_web3.listAccounts();
         return accounts[0];
       },
-      updateVariables() {
-        const entrepreneur = Entrepreneurs['entrepreneurs'][this.id];
-        this.name = entrepreneur.title;
-        this.description = entrepreneur.description;
-        this.progress = entrepreneur.progress;
-        this.image = 'entrepreneurs/'+ entrepreneur.src;
-        this.personData = People['results'][entrepreneur.id]
+      async updateVariables() {
+        const business = Entrepreneurs['entrepreneurs'][this.id];
+        business['account'] = this.account;
+        const body = { args: [this.account], from: this.walletAddress}
+        const response = await this.axios.post(`api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`, body)
+        const info = response.data.result.output;
+        this.creditScore = info[4];
+        this.target = info[3];
+        const { data } = await this.$axios.get('https://randomuser.me/api/', {
+        params: {
+          seed: this.account,
+          results: 1,
+          inc: 'name,picture,location, email'
+        }
+        });
+        this.personData = data.results[0];
+        this.name = business.title;
+        this.description = business.description;
+        this.progress = business.progress;
+        this.image = 'entrepreneurs/'+ business.src;
       },
-      async lendNow(id) {
+      async lendNow() {
         try {
-          const body = { args: [id] }
-          const { data } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`, // fix this
+          const body = { args: [this.$BITFINCA_ADDRESS, this.loanAmount], from: this.walletAddress, signer: this.walletAddress };
+          await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/transfer`,
             body
           );
-        this.response = data;
       } catch (err) {
         console.log(err);
       }
@@ -264,7 +294,7 @@ import People from '../../assets/People.json'
         params: {
           seed: 'le'+this.id,
           results: parseInt(numLenders),
-          inc: 'name,picture,location'
+          inc: 'picture'
         }
         });
         this.lenders = lResponse.data.results;
@@ -272,7 +302,7 @@ import People from '../../assets/People.json'
         params: {
           seed: 'va'+ this.id,
           results: parseInt(numValidators),
-          inc: 'name,picture,location'
+          inc: 'picture'
         }
         });
         this.validators = vResponse.data.results;

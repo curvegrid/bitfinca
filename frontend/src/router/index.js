@@ -62,12 +62,13 @@ const routes = [
     component: Details,
   },
   {
-    path:'/details/:id',
+    path:'/details/:id/:account',
     name:'Details ID',
     component: Details,
     props: (route) => ({
       create: false,
       id: route.params.id,
+      account: route.params.account,
     })
   },
   {

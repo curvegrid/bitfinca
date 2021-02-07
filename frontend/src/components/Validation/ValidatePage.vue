@@ -2,7 +2,7 @@
   <div>
     <v-container>
       <h1 class="page-title">
-        Validate Businesses
+        Become a Lender
       </h1>
     </v-container>
     <v-main class="grey lighten-5" style="padding: 20px 0px 0px;">
@@ -53,15 +53,15 @@
                 >
                   <v-card>
                     <v-card-title class=body-text>
-                      {{ e.title }}
+                      {{ e.business.title }}
                       <v-spacer/>
-                      <v-avatar><img :src="e.avatar"></v-avatar>
+                      <v-avatar><img :src="e.person.picture.large"></v-avatar>
                     </v-card-title>
                     <v-card-text>
-                      <img height=150 :src="(require(`../../assets/entrepreneurs/${e.src}`))"/>
-                      {{ e.progress }}% funded
+                      <img height=150 :src="(require(`../../assets/entrepreneurs/${e.business.src}`))"/>
+                      {{ e.business.progress }}% funded
                       <v-progress-linear
-                        :value="e.progress"
+                        :value="e.business.progress"
                         height="12"
                         rounded
                         color="#B6509E">
@@ -69,7 +69,7 @@
                     </v-card-text>
                     <v-card-actions>
                       <v-spacer/>
-                      <v-btn @click="validate()" class="lend-button">Validate</v-btn>
+                      <v-btn class="lend-button" @click="validate(e.business.account)">Validate</v-btn>
                     </v-card-actions>
                   </v-card>
                 </v-col>
@@ -84,90 +84,97 @@
 </template>
 
 <script>
+import Entrepreneurs  from '../../assets/DummyData.json';
+
   export default {
     data: () => ({
-      entrepreneurs: [
-        {
-          title: 'Coworking Space',
-          avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
-          src: 'pablo-finance.svg',
-          progress: 22,
-        },
-        {
-          title: 'Agriculture',
-          avatar: 'https://randomuser.me/api/portraits/men/66.jpg',
-          src: 'pablo-eco-technologies.svg',
-          progress: 66,
-        },
-        {
-          title: 'Small Business',
-          avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-          src: 'pablo-payment-processed.svg',
-          progress: 44,
-        },
-        {
-          title: 'Resturant',
-          avatar: 'https://randomuser.me/api/portraits/women/16.jpg',
-          src: 'pablo-order-completed.svg',
-          progress: 16,
-        },
-        {
-          title: 'Education for All',
-          avatar: 'https://randomuser.me/api/portraits/men/18.jpg',
-          src: 'pablo-education.svg',
-          progress: 18,
-        },
-        {
-          title: 'Assessibility',
-          avatar: 'https://randomuser.me/api/portraits/men/54.jpg',
-          src: 'pablo-help-and-care.svg',
-          progress: 54,
-        },
-        {
-          title: 'Facial Recognition',
-          avatar: 'https://randomuser.me/api/portraits/women/24.jpg',
-          src: 'pablo-face-recognition.svg',
-          progress: 24,
-        },
-        {
-          title: 'Blogging',
-          avatar: 'https://randomuser.me/api/portraits/women/11.jpg',
-          src: 'pablo-blogging.svg',
-          progress: 11,
-        },
-        {
-          title: 'Record Label',
-          avatar: 'https://randomuser.me/api/portraits/men/26.jpg',
-          src: 'pablo-friendship.svg',
-          progress: 26,
-        },
-        {
-          title: 'Mining',
-          avatar: 'https://randomuser.me/api/portraits/men/49.jpg',
-          src: 'pablo-bitcoin-mining.svg',
-          progress: 49,
-        },
-        {
-          title: 'Artificial Intelligence',
-          avatar: 'https://randomuser.me/api/portraits/women/27.jpg',
-          src: 'pablo-artifficial-intelligence.svg',
-          progress: 27,
-        },
-        {
-          title: 'Car Rental',
-          avatar: 'https://randomuser.me/api/portraits/men/40.jpg',
-          src: 'pablo-car-rental.svg',
-          progress: 40,
-        },
-      ],
+      entrepreneurs: [],
+      allEntrepreneurs: [],
+      dummyData: Entrepreneurs['entrepreneurs'],
       categories: [
         'Arts', 'Agriculture', 'Education', 'Environment', 'Technology'
       ],
+      businessAccount: null,
+      approval: true,
     }),
-    methods: {
-      validate() {
-        console.log("validate");
+    async created() {
+      const Web3 = require('web3');
+      if (window.ethereum != null) { // true if user is using MetaMask
+        window.web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
       }
+      this.connectToWeb3();
+      this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+      this.walletAddress = await this.getActiveAccount();
+      this.allEntrepreneurs = await this.getEntrepreneurs();
+    },
+    methods: {
+      connectToWeb3() {
+      const web3Config = this.$root.$_cgutils.connectToWeb3(window.web3);
+      this.$root.$_web3 = web3Config.provider;
+      this.$root.$_web3Available = web3Config.web3Available;
+      },
+      // Get the Eth Address currently selected in MetaMask
+      async getActiveAccount() {
+        const accounts = await this.$root.$_web3.listAccounts();
+        return accounts[0];
+      },
+      goTo(id, account) {
+        this.$router.push({
+          path: `/details/${id}/${account}`,
+          });
+      },
+      async getEntrepreneurs() {
+        try {
+          const body = { args: [], from: this.walletAddress }
+          const { data } = await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/totalEntrepreneurs`,
+            body
+          );
+        this.allEntrepreneurs = data.result.output;
+      } catch (err) {
+        console.log(err);
+      }
+      try {
+        const entrepreneurs = [];
+        for (const e in this.allEntrepreneurs) {
+          const body = { args: [this.allEntrepreneurs[e]] }
+          const { data } = await this.axios.post(
+          `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`,
+          body
+        );
+          entrepreneurs.push(data.result.output);
+        }
+        this.allEntrepreneurs = entrepreneurs;
+      } catch (err) {
+        console.log(err);
+      }
+        for (const e in this.allEntrepreneurs) {
+          const { data } = await this.$axios.get('https://randomuser.me/api/', {
+          params: {
+            seed: this.allEntrepreneurs[e][2], // address
+            results: 1,
+            inc: 'name,picture,location'
+          }
+          });
+          const person = data.results[0];
+          const business = this.dummyData[this.allEntrepreneurs[e][1]];
+          business['account'] = this.allEntrepreneurs[e][2];
+          business['key'] = this.allEntrepreneurs[e][1];
+          this.entrepreneurs.push({person: person, business: business});
+        }
+      },
+      async validate(account) {
+        try {
+          const body = { args: [account, this.approval], from: this.walletAddress, signer: this.walletAddress };
+          await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/validate`,
+            body
+          );
+      } catch (err) {
+        console.log(err);
+      }
+      },
     }
   }
 </script>

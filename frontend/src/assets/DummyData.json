@@ -10,7 +10,8 @@
       "title":"Agriculture",
       "id":2,
       "src":"pablo-eco-technologies.svg",
-      "progress":66
+      "progress":66,
+      "description": "A loan will help this entrepreneur overcome the challenges brought by COVID-19. "
     },
     "small_business": {
       "title":"Small Business",
@@ -23,55 +24,64 @@
       "title":"Resturant",
       "id":4,
       "src":"pablo-order-completed.svg",
-      "progress":16
+      "progress":16,
+      "description": "A loan will help this entrepreneur overcome the challenges brought by COVID-19. "
     },
     "education_for_all": {
       "title":"Education for All",
       "id":5,
       "src":"pablo-education.svg",
-      "progress":18
+      "progress":18,
+      "description": "A loan will help this entrepreneur overcome the challenges brought by COVID-19. "
     },
     "assessibility": {
       "title":"Assessibility",
       "id":6,
       "src":"pablo-help-and-care.svg",
-      "progress":54
+      "progress":54,
+      "description": "A loan will help this entrepreneur overcome the challenges brought by COVID-19. "
     },
     "facial_recognition": {
       "title":"Facial Recognition",
       "id":7,
       "src":"pablo-face-recognition.svg",
-      "progress":24
+      "progress":24,
+      "description": "A loan will help this entrepreneur overcome the challenges brought by COVID-19. "
     },
     "blogging": {
       "title":"Blogging",
       "id":8,
       "src":"pablo-blogging.svg",
-      "progress":11
+      "progress":11,
+      "description": "A loan will help this entrepreneur overcome the challenges brought by COVID-19. "
     },
     "record_label": {
       "title":"Record Label",
       "id":9,
       "src":"pablo-friendship.svg",
-      "progress":26
+      "progress":26,
+      "description": "A loan will help this entrepreneur overcome the challenges brought by COVID-19. "
     },
     "mining": {
       "title":"Mining",
       "id":10,
       "src":"pablo-bitcoin-mining.svg",
-      "progress":49
+      "progress":49,
+      "description": "A loan will help this entrepreneur expand their mining business."
     },
     "artificial_intelligence": {
       "title":"Artificial Intelligence",
       "id":11,
       "src":"pablo-artifficial-intelligence.svg",
-      "progress":27
+      "progress":27,
+      "description": "A loan will help this entrepreneur develop more solutions for his company."
     },
     "car_rental": {
       "title":"Car Rental",
       "id":12,
       "src":"pablo-car-rental.svg",
-      "progress":40
+      "progress":40,
+      "description": "A loan will help this entrepreneur overcome the challenges brought by COVID-19. "
     }
   }
 }

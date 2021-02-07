@@ -8,17 +8,6 @@
     <v-main class="grey lighten-5" style="padding: 20px 0px 0px;">
       <v-container>
         <v-row>
-          <!-- <v-col
-            cols="12"
-            sm="2"
-          >
-            <v-sheet
-              rounded="lg"
-              min-height="268"
-            >
-            </v-sheet>
-          </v-col> -->
-
           <v-col
             cols="12"
             sm="8"
@@ -32,20 +21,23 @@
               cols="7"
               md="5"
               >
-                <img height=300 :src="require('../../assets/icons/clip-order-complete-1.png')">
+                <v-img contain :src="require(`../../assets/${image}`)"/>
               </v-col>
               <v-col
                cols="7"
               md="6"
               >
                 <h2 class="aligh-left page-header-one">{{ businessName }}</h2>
-                <p class="body-text">Information about my business</p>
+                <p class="body-text">{{ description }}</p>
+                <p class=body-text style="font-size: 18px;"><strong>Target: </strong> {{fundingTarget}}</p>
+                <p class=body-text style="font-size: 18px;"><strong>Credit Score: </strong> {{creditScore}}</p>
                 <v-spacer/>
-                  <p class=body-text>10% funded out of ${{ fundingTarget }}</p>
+                  <p class=body-text>{{progress}}% funded out of ${{ fundingTarget }}</p>
                   <v-progress-linear
-                    value="10"
+                    :value="progress"
                     height="12"
                     rounded
+                    class=ma-3
                     color="#B6509E">
                   </v-progress-linear>
               </v-col>
@@ -54,12 +46,12 @@
             <v-card color=transparent elevation=0>
               <v-card-title class="page-header-one">
                 About me <v-spacer/>
-                <!-- <v-avatar><v-img :src="personData.picture.large" /></v-avatar> -->
+                <v-avatar><v-img :src="personData.picture.large" /></v-avatar>
               </v-card-title>
               <v-card-text class=body-text>
                 <v-row>
                   <v-col>
-                  <p><strong>{{firstName}} {{personData.name.last}}</strong> {{personData.location.city}}, {{personData.location.country}}</p>
+                  <p><strong>{{personData.name.first}} {{personData.name.last}}</strong> {{personData.location.city}}, {{personData.location.country}}</p>
                   </v-col>
                   <v-col>
                   <p>Contact: {{personData.email}}</p>
@@ -108,7 +100,7 @@
               min-height="300"
             >
             <v-container>
-              <v-card>
+              <v-card elevation=0>
                 <v-card-text>
                   <v-text-field
                     :v-model="requestAmount"
@@ -131,7 +123,10 @@
               </v-card>
               <v-card>
                 <v-card-text>
-                   {{ loanAmount }}<v-btn @click="approve()" class="lend-button">Approve BitFinca</v-btn>
+                   <v-row>
+                     <v-col md=6><p class="mt-3 body-text text-md-right">{{ loanAmount }} Tokens</p></v-col>
+                     <v-col md=5><v-btn @click="approve()" class="lend-button" small >Approve BitFinca</v-btn></v-col>
+                   </v-row>
                 </v-card-text>
               </v-card>
             </v-container>
@@ -175,7 +170,9 @@
               <v-card >
                 <v-card-title class=page-header-one>Documentation</v-card-title>
                   <v-card-text>
-                    Data data data
+                    <a><p>Financial Documents</p></a>
+                    <a><p>Business Registration</p></a>
+                    <a><p>Detailed Business Plan</p></a>
                   </v-card-text>
                 </v-card>
             </v-container>
@@ -189,6 +186,7 @@
 
 <script>
   import 'dotenv'
+  import Entrepreneurs  from '../../assets/DummyData.json';
 
   export default {
     props: {
@@ -217,7 +215,10 @@
           large: "https://randomuser.me/api/portraits/women/17.jpg"
         }
       },
+      description: 'Information about my business',
+      image: 'icons/clip-order-complete-1.png',
       fundingTarget: 2000,
+      progress: 10,
       creditScore: 690,
       account: null,
       updates: [
@@ -249,7 +250,7 @@
     }),
     computed: {
       loanAmount() {
-        return this.fundingTarget;
+        return 1.0653* this.fundingTarget;
       }
     },
     async created() {
@@ -287,20 +288,36 @@
             `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`, body,
           );
           const response = data.result.output;
-          this.firstName = response[0];
           this.businessName = response[1];
           this.fundingTarget = response[3];
           this.creditScore = response[4];
+          const business = Entrepreneurs['entrepreneurs'][this.businessName];
+          this.businessName = business.title;
+          this.description = business.description;
+          this.progress = business.progress;
+          this.image = 'entrepreneurs/'+ business.src;
+          const pData = await this.$axios.get('https://randomuser.me/api/', {
+            params: {
+              seed: this.account,
+              results: 1,
+              inc: 'name,picture,location,email'
+            }
+          });
+          this.personData = pData.data.results[0];
         } catch (err) {
             console.log(err);
         }
       },
       async requestFunds() {
         try {
-        const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`, // TODO fix this
-        );
-          this.response = data.result.output;
+          const body = {
+              args: [this.account, this.requestAmount],
+              from: this.account,
+              signer: this.account
+            }
+          await this.$axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/addToTarget`, body
+          );
         } catch (err) {
           console.log(err);
         }
@@ -346,10 +363,14 @@
       },
       async updateNeed() {
         try {
-        const { data } = await this.$axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`, // TODO fix this
-        );
-          this.response = data;
+          const body = {
+            args: [this.account, this.requestAmount],
+            from: this.account,
+            signer: this.account
+          }
+          await this.$axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/setTarget`, body
+          );
         } catch (err) {
           console.log(err);
         }

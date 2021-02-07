@@ -92,7 +92,13 @@ contract Bitfinca {
 
   function addEntrepreneur(string memory _name, string memory _businessName, address _account, uint _target) public {
     require(entrepreneurs[_account].valid == false, "You have already registered your business");
-    entrepreneurs[_account] = Entrepreneur(_name, _businessName, _account, _target, defaultCreditScore, true);
+    entrepreneurs[_account] = Entrepreneur({
+      founder: _name,
+      businessName: _businessName,
+      account: _account,
+      target: _target,
+      creditScore: defaultCreditScore,
+      valid: true});
     fundingTarget[_account] = _target;
     entrepreneurValidatorCount[_account] = 0; // set validator count to 0
     allEntrepreneurs.push(_account);

@@ -156,7 +156,7 @@
         >
           <v-list-item two-line class="px-2">
             <v-list-item-avatar>
-              <v-img src="https://randomuser.me/api/portraits/women/90.jpg"></v-img>
+              <v-img :src="userData.picture.large"></v-img>
             </v-list-item-avatar>
           </v-list-item>
 
@@ -179,7 +179,7 @@
         <v-list class="grow">
             <v-list-item two-line>
           <v-list-item-content>
-            <v-list-item-title>User</v-list-item-title>
+            <v-list-item-title><p>{{userData.name.first}}</p></v-list-item-title>
             <v-list-item-subtitle>Logged In</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -268,6 +268,8 @@ export default {
     ],
     links: ["Home", "Contacts", "Settings"],
     mini: true,
+    account: null,
+    userData: {},
   }),
   filters: {
     prettyJSON(value) {
@@ -285,6 +287,8 @@ export default {
 
     this.connectToWeb3();
     this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+    this.account = await this.getActiveAccount();
+    await this.getProfilePicture();
   },
   /** DApp Sample End **/
   methods: {
@@ -301,6 +305,17 @@ export default {
       return accounts[0];
     },
     /** DApp Sample End **/
+    async getProfilePicture() {
+      const response = await this.$axios.get('https://randomuser.me/api/', {
+          params: {
+            seed: this.account,
+            results: 1,
+            inc: 'name,picture'
+          }
+        });
+      this.userData = response.data.results[0];
+    }
+
   },
 };
 </script>
