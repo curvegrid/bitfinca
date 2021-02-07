@@ -33,7 +33,7 @@ contract Bitfinca {
   mapping(address => Lender) public lenders;
   mapping(address => Entrepreneur) public entrepreneurs;
   mapping(address => Validator) public validators;
-  mapping(address => bool) public registeredUser;
+  mapping(address => bool) private registeredUser;
 
   /* RETRIEVING */
   address[] public allLenders;
@@ -79,7 +79,7 @@ contract Bitfinca {
 
   /* methods */
   function addLender(string memory _name, address _account) public {
-    require(lenders[_account].account == address(0), "You have already registered to be a lender");
+    require(lenders[_account].valid == false, "You have already registered to be a lender");
     lenders[_account] = Lender({
         name: _name,
         account: _account,
@@ -91,7 +91,7 @@ contract Bitfinca {
   }
 
   function addEntrepreneur(string memory _name, string memory _businessName, address _account, uint _target) public {
-    require(entrepreneurs[_account].account == address(0), "You have already registered your business");
+    require(entrepreneurs[_account].valid == false, "You have already registered your business");
     entrepreneurs[_account] = Entrepreneur(_name, _businessName, _account, _target, defaultCreditScore, true);
     fundingTarget[_account] = _target;
     entrepreneurValidatorCount[_account] = 0; // set validator count to 0
@@ -102,7 +102,7 @@ contract Bitfinca {
   }
 
   function addValidator(string memory _name, address _account) public {
-    require(validators[_account].account == address(0), "You have already registered to be a validator");
+    require(validators[_account].valid == false, "You have already registered to be a validator");
     validators[_account] = Validator({
         name: _name,
         account: _account,
@@ -152,4 +152,27 @@ contract Bitfinca {
     emit Validate(business, approval);
   }
   /* Validators end */
+
+  function totalEntrepreneurs() public view returns (address[] memory) {
+    return allEntrepreneurs;
+  }
+
+  function totalValidators() public view returns (address[] memory) {
+    return allValidators;
+  }
+
+  function totalLenders() public view returns (address[] memory) {
+    return allLenders;
+  }
+
+  function numEntrepreneurs() public view returns (uint256) {
+    return allEntrepreneurs.length;
+  }
+
+  function numValidators() public view returns (uint256) {
+    return allValidators.length;
+  }
+  function numLenders() public view returns (uint256) {
+    return allLenders.length;
+  }
 }

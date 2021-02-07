@@ -91,6 +91,7 @@ import People from '../../assets/People.json'
   export default {
     data: () => ({
       entrepreneurs: Entrepreneurs['entrepreneurs'],
+      allEntrepreneurs: [],
       categories: [
         'Arts', 'Agriculture', 'Education', 'Environment', 'Technology'
       ],
@@ -105,6 +106,8 @@ import People from '../../assets/People.json'
       this.connectToWeb3();
       this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
       this.walletAddress = await this.getActiveAccount();
+      this.allEntrepreneurs = await this.getEntrepreneurs();
+      console.log("BaseUrl", this.$BASE_URL);
     },
     methods: {
       connectToWeb3() {
@@ -121,6 +124,19 @@ import People from '../../assets/People.json'
         this.$router.push({
           path: `/details/${label}`,
           });
+      },
+      async getEntrepreneurs() {
+        try {
+          const body = { args: [], from: this.walletAddress }
+          const { data } = await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/totalEntrepreneurs`,
+            body
+          );
+        this.response = data;
+        console.log(this.response);
+      } catch (err) {
+        console.log(err);
+      }
       },
       async lendNow(id) {
         try {

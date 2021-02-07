@@ -184,7 +184,7 @@
       async getTotalTokens() {
         try {
         const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/fincatoken/methods/totalSupply`,
+          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`,
         );
           this.total = data.result;
         } catch (err) {
@@ -218,7 +218,7 @@
             from: this.account,
           }
           const { data } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/fincatoken/methods/balanceOf`, body,
+            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/balanceOf`, body,
           );
             this.tokenBalance = data.result.output;
         } catch (err) {
