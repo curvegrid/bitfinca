@@ -30,15 +30,17 @@
                 <h2 class="aligh-left page-header-one">{{ businessName }}</h2>
                 <p class="body-text">{{ description }}</p>
                 <p class=body-text style="font-size: 18px;"><strong>Target: </strong> {{fundingTarget}}</p>
+                <p class=body-text style="font-size: 18px;"> <strong>Raised: </strong> {{raisedAmount}}</p>
                 <p class=body-text style="font-size: 18px;"><strong>Credit Score: </strong> {{creditScore}}</p>
                 <v-spacer/>
-                  <p class=body-text>{{progress}}% funded out of ${{ fundingTarget }}</p>
+                  <p class=body-text style="font-size: 16px;">{{progress}}% funded out of ${{ fundingTarget }}</p>
                   <v-progress-linear
                     :value="progress"
                     height="12"
                     rounded
-                    class=ma-3
-                    color="#B6509E">
+                    class=mb-3
+                    color="#B6509E"
+                    >
                   </v-progress-linear>
               </v-col>
             </v-row>
@@ -219,6 +221,7 @@
       image: 'icons/clip-order-complete-1.png',
       fundingTarget: 2000,
       progress: 10,
+      raisedAmount: 1100,
       creditScore: 690,
       account: null,
       updates: [
@@ -264,6 +267,7 @@
       this.connectToWeb3();
       this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
       this.account = await this.getActiveAccount();
+      await this.getApprovalStatus();
       await this.fetchUsers(Math.random()*20+3, Math.random()*20+2);
       await this.updateVariables();
     },
@@ -278,6 +282,28 @@
         const accounts = await this.$root.$_web3.listAccounts();
         return accounts[0];
       },
+      async getApprovalStatus() {
+        try {
+          const body = {
+            args: [this.account],
+            from: this.walletAddress,
+          }
+          const {
+            data: {
+              result: { output },
+            },
+          } = await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/getValidators`, body,
+          );
+          if (output != null) {
+            this.validators = output;
+            this.validatorCount = this.validators.length;
+          }
+          console.log(this.validators);
+        } catch (err) {
+          console.log(err);
+        }
+      },
       async updateVariables() {
         try {
           const body = {
@@ -288,13 +314,15 @@
             `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`, body,
           );
           const response = data.result.output;
+          console.log(response);
           this.businessName = response[1];
           this.fundingTarget = response[3];
-          this.creditScore = response[4];
+          this.creditScore = response[5];
           const business = Entrepreneurs['entrepreneurs'][this.businessName];
           this.businessName = business.title;
           this.description = business.description;
-          this.progress = business.progress;
+          this.raisedAmount = response[4];
+          this.progress = Math.round((this.raisedAmount/this.fundingTarget)*100);
           this.image = 'entrepreneurs/'+ business.src;
           const pData = await this.$axios.get('https://randomuser.me/api/', {
             params: {
@@ -376,22 +404,36 @@
         }
       },
       async fetchUsers(numLenders, numValidators) {
-        const lResponse = await this.$axios.get('https://randomuser.me/api/', {
-        params: {
-          seed: 'l'+this.id,
-          results: parseInt(numLenders),
-          inc: 'name,picture,location'
+        if (numLenders > 0) {
+          const lResponse = await this.$axios.get('https://randomuser.me/api/', {
+          params: {
+            seed: 'le'+this.id,
+            results: parseInt(numLenders),
+            inc: 'picture'
+          }
+          });
+          this.lenders = lResponse.data.results;
         }
-        });
-        this.lenders = lResponse.data.results;
-        const vResponse= await this.$axios.get('https://randomuser.me/api/', {
-        params: {
-          seed: 'v'+ this.id,
-          results: parseInt(numValidators),
-          inc: 'name,picture,location'
+        if (numValidators > 0) {
+          for (const vAddress in this.validators) {
+            const vResponse= await this.$axios.get('https://randomuser.me/api/', {
+            params: {
+            seed: this.validators[vAddress],
+            results: 1,
+            inc: 'picture'
+            }
+          });
+          this.validators = vResponse.data.results;
+          }
         }
-        });
-        this.validators = vResponse.data.results;
+          const vResponse= await this.$axios.get('https://randomuser.me/api/', {
+          params: {
+            seed: 'va'+ this.id,
+            results: parseInt(numValidators),
+            inc: 'picture'
+          }
+          });
+          this.validators.push(...vResponse.data.results);
         this.personData = await this.$axios.get('https://randomuser.me/api/', {
           params: {
             seed: this.firstName,

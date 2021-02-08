@@ -34,10 +34,12 @@
                 <v-row>
                   <v-col>
                   <p><strong>{{userData.name.first}} {{userData.name.last}}</strong> {{userData.location.city}}, {{userData.location.country}}</p>
+                  <p><strong>Role:</strong> {{role}}</p>
                   </v-col>
                   <v-col>
                   <p>Contact: {{userData.email}}</p>
                   </v-col>
+
                 </v-row>
                 </v-card-text>
               </v-col>
@@ -160,6 +162,7 @@
       depositAmount: 0,
       withdrawAmount: 0,
       headers: [],
+      role: "",
       userData: {},
       payments: [
         {
@@ -288,6 +291,27 @@
           }
         });
       this.userData = response.data.results[0];
+      try {
+      const body = { args: [this.account], from: this.account }
+      const { data } = await this.axios.post(
+        `api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/addressToRole`,
+        body
+      );
+      const role = data.result.output;
+      console.log(role);
+      if (role[0]){
+        this.role += "Entrepreneur ";
+      }
+      if (role[1]){
+        this.role += "Validator ";
+      }
+      if (role[2]){
+        this.role += "Lender ";
+      }
+      console.log(this.role);
+      } catch (err) {
+        console.log(err);
+      }
     },
     }
   }
