@@ -218,14 +218,12 @@ contract FincaToken {
 
   function deposit(uint256 _amount) public {
       require(address(this).balance >= _amount, "insufficient funds to deposit");
-      require(owner == msg.sender, "You may only deposit from your own account");
       _balances[msg.sender] += _amount;
 
       emit Deposit(_amount);
   }
 
   function withdraw(uint256 _amount) public {
-    require(msg.sender == owner, "You may only withdraw from your own account");
     require(_balances[msg.sender] >= _amount, "insufficient funds in your account");
 
     _balances[msg.sender] -= _amount;

@@ -137,7 +137,7 @@
                     </v-col>
                     <v-col md=8>
                       <v-row>
-                      <v-text-field v-model="depositAmount" class=ma-0 dense></v-text-field>
+                      <v-text-field v-model="withdrawAmount" class=ma-0 dense></v-text-field>
                       <v-btn icon @click="withdraw()"><v-icon>mdi-minus</v-icon></v-btn>
                       </v-row>
                     </v-col>
@@ -193,7 +193,6 @@
       this.connectToWeb3();
       this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
       this.account = await this.getActiveAccount();
-      console.log("Account", this.account);
       const gtotal = this.getTotalTokens();
       const gTrans = this.getTransactions();
       const gBalance = this.getTokenBalance();
@@ -203,7 +202,6 @@
     methods: {
       connectToWeb3() {
         const web3Config = this.$root.$_cgutils.connectToWeb3(window.web3);
-        console.log("This web3config", web3Config);
         this.$root.$_web3 = web3Config.provider;
         this.$root.$_web3Available = web3Config.web3Available;
       },
@@ -276,11 +274,21 @@
           })
         }
       },
-      deposit() {
-        console.log("Deposit", this.depositAmount);
+      async deposit() {
+        const body = {
+          args: [this.depositAmount],
+          from: this.account,
+          signer: this.account
+        }
+        await this.axios.post(`/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/deposit`, body);
       },
-      withdraw() {
-        console.log("Withdraw", this.withdrawAmount);
+      async withdraw() {
+        const body = {
+          args: [this.withdrawAmount],
+          from: this.account,
+          signer: this.account
+        }
+        await this.axios.post(`/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/withdraw`, body);
       },
       async getUser() {
       const response = await this.$axios.get('https://randomuser.me/api/', {
@@ -298,7 +306,6 @@
         body
       );
       const role = data.result.output;
-      console.log(role);
       if (role[0]){
         this.role += "Entrepreneur ";
       }

@@ -112,7 +112,6 @@
                 </v-card-text>
               </v-card>
             </v-container>
-
             <v-container>
               <v-card elevation=0>
                 <v-card-text>
@@ -123,11 +122,15 @@
                   <v-btn @click="updateTotalNeed()" class="page-button">Update Total Need</v-btn>
                 </v-card-text>
               </v-card>
-              <v-card>
+            <v-card>
                 <v-card-text>
                    <v-row>
-                     <v-col md=6><p class="mt-3 body-text text-md-right">{{ loanAmount }} Tokens</p></v-col>
-                     <v-col md=5><v-btn @click="approve()" class="lend-button" small >Approve BitFinca</v-btn></v-col>
+                     <v-col md=6><p class="mt-3 mb-2 body-text text-md-right">{{ loanAmount }} Tokens</p></v-col>
+                     <v-col md=5>
+                       <v-btn @click="approve()" class="ma-1 lend-button" small >Approve BitFinca</v-btn>
+                     <v-btn @click="borrowFromAave()" class="ma-1 page-button" small>Borrow from AAVE</v-btn>
+
+                     </v-col>
                    </v-row>
                 </v-card-text>
               </v-card>
