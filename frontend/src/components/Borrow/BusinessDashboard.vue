@@ -361,6 +361,48 @@
           console.log(err);
         }
       },
+      async borrowFromAave() {
+        try {
+          // retrieve the Bitfinca Token address
+          const {
+            data: {
+              result: { address },
+            },
+          } = await this.axios.get(
+            `/api/v0/chains/ethereum/addresses/finca_token`, body,
+          );
+
+          // call approve
+          const body = {
+            args: [
+                address, // Finca Token address
+                this.loanAmount, // amount to borrow, must have been pre-deposited/on-behalf-of'd in the Suaave contract
+                1, // interest rate mode, effectively ignored
+                0, // referral code, ignored
+                this.account // on behalf of, this account address
+              ],
+            from: this.account
+          }
+          const {
+            data: {
+              result: { tx, submitted },
+            },
+          } = await this.axios.post(
+            `/api/v0/chains/ethereum/addresses/suaave/contracts/suaave/methods/deposit`, body,
+          );
+          if (!submitted) {
+            // Get the signer from MetaMask
+            const signer = this.$root.$_web3.getSigner(tx.from);
+            // Format the transaction so that ethers.js can sign it
+            const ethersTx = this.$root.$_cgutils.formatEthersTx(tx);
+            // Submit the transaction to the blockchain
+            const txResponse = await signer.sendTransaction(ethersTx);
+            this.response = txResponse;
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      },
       async updateNeed() {
         try {
           const body = {
