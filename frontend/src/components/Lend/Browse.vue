@@ -127,7 +127,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
         try {
           const body = { args: [], from: this.walletAddress }
           const { data } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/totalEntrepreneurs`,
+            `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/totalEntrepreneurs`,
             body
           );
         this.allEntrepreneurs = data.result.output;
@@ -139,7 +139,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
         for (const e in this.allEntrepreneurs) {
           const body = { args: [this.allEntrepreneurs[e]] }
           const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`,
+          `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/entrepreneurs`,
           body
         );
           entrepreneurs.push(data.result.output);
@@ -166,9 +166,17 @@ import Entrepreneurs  from '../../assets/DummyData.json';
       },
       async lendNow() {
         try {
-          const body = { args: [this.$BITFINCA_ADDRESS, 5], from: this.walletAddress, signer: this.walletAddress };
+          const {
+            data: {
+              result: { address },
+            },
+          } = await this.axios.get(
+            `/api/v0/chains/ethereum/addresses/bitfinca`
+          );
+
+          const body = { args: [address, 5], from: this.walletAddress, signer: this.walletAddress };
           await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/transfer`,
+            `/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/transfer`,
             body
           );
       } catch (err) {

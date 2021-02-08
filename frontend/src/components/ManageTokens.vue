@@ -213,7 +213,7 @@
       async getTotalTokens() {
         try {
         const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/totalSupply`,
+          `/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/totalSupply`,
         );
           this.total = data.result;
         } catch (err) {
@@ -222,10 +222,19 @@
       },
       async getTransactions() {
         try {
-        const { data } = await this.axios.get(
-          `/api/v0/events?contract_address=${this.$TOKEN_CONTRACT}`,
-        );
-        this.transactions = data.result;
+          // retrieve the Bitfinca Token address
+          const {
+            data: {
+              result: { address },
+            },
+          } = await this.axios.get(
+            `/api/v0/chains/ethereum/addresses/finca_token`,
+          );
+
+          const { data } = await this.axios.get(
+            `/api/v0/events?contract_address=${address}`,
+          );
+          this.transactions = data.result;
         } catch (err) {
           console.log(err);
         }
@@ -247,7 +256,7 @@
             from: this.account,
           }
           const { data } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/balanceOf`, body,
+            `/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/balanceOf`, body,
           );
             this.tokenBalance = data.result.output;
         } catch (err) {

@@ -131,7 +131,7 @@ export default {
             result: { tx, submitted },
           },
         } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/addLender`, body
+          `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/addLender`, body
         );
 
         if (!submitted) {
