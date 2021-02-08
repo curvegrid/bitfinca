@@ -107,7 +107,7 @@ export default {
           signer: account,
         }
         const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/addEntrepreneur`, body
+          `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/addEntrepreneur`, body
         );
         this.response = data;
         console.log(data);

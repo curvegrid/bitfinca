@@ -128,7 +128,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
         try {
           const body = { args: [], from: this.walletAddress }
           const { data } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/totalEntrepreneurs`,
+            `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/totalEntrepreneurs`,
             body
           );
         this.allEntrepreneurs = data.result.output;
@@ -140,7 +140,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
         for (const e in this.allEntrepreneurs) {
           const body = { args: [this.allEntrepreneurs[e]] }
           const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`,
+          `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/entrepreneurs`,
           body
         );
           entrepreneurs.push(data.result.output);
@@ -173,7 +173,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
             result: { tx, submitted },
           },
            } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/validate`,
+            `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/validate`,
             body
           );
           if (!submitted) {
@@ -189,7 +189,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
           body = { args: [account, 1], from: this.walletAddress, signer: this.walletAddress };
 
           await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/incrementBalance`,
+            `/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/incrementBalance`,
             body
           );
           if (!submitted) {

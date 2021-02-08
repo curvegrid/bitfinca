@@ -266,7 +266,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
         const business = Entrepreneurs['entrepreneurs'][this.id];
         business['account'] = this.account;
         const body = { args: [this.account], from: this.walletAddress}
-        const response = await this.axios.post(`api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`, body)
+        const response = await this.axios.post(`api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/entrepreneurs`, body)
         const info = response.data.result.output;
         this.creditScore = info[5];
         this.target = info[3];
@@ -296,7 +296,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
               result: { output },
             },
           } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/getValidators`, body,
+            `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/getValidators`, body,
           );
           if (output != null) {
             this.validators = output;
@@ -315,7 +315,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
               result: { address },
             },
           } = await this.axios.get(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}`, body,
+            `/api/v0/chains/ethereum/addresses/bitfinca`, body,
           );
           const body = { args: [address, this.loanAmount], from: this.walletAddress, signer: this.walletAddress };
           const {
@@ -323,7 +323,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
               result: { tx, submitted },
             },
           } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/transfer`, body,
+            `/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/transfer`, body,
           );
           if (!submitted) {
             // Get the signer from MetaMask

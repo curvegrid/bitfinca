@@ -89,7 +89,7 @@ export default {
           signer: account,
         }
         const { data } = await this.axios.post(
-          `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/addValidator`, body
+          `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/addValidator`, body
         );
         this.response = data;
       } catch (err) {

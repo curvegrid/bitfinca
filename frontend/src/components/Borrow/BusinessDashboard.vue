@@ -296,7 +296,7 @@
               result: { output },
             },
           } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/getValidators`, body,
+            `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/getValidators`, body,
           );
           if (output != null) {
             this.validators = output;
@@ -314,7 +314,7 @@
             from: this.account,
           }
           const { data } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/entrepreneurs`, body,
+            `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/entrepreneurs`, body,
           );
           const response = data.result.output;
           console.log(response);
@@ -347,7 +347,7 @@
               signer: this.account
             }
           await this.$axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/addToTarget`, body
+            `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/addToTarget`, body
           );
         } catch (err) {
           console.log(err);
@@ -361,7 +361,7 @@
               result: { address },
             },
           } = await this.axios.get(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}`, body,
+            `/api/v0/chains/ethereum/addresses/bitfinca`
           );
 
           // call approve
@@ -377,7 +377,7 @@
               result: { tx, submitted },
             },
           } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/approve`, body,
+            `/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/approve`, body,
           );
           if (!submitted) {
             // Get the signer from MetaMask
@@ -400,7 +400,7 @@
               result: { address },
             },
           } = await this.axios.get(
-            `/api/v0/chains/ethereum/addresses/finca_token`, body,
+            `/api/v0/chains/ethereum/addresses/finca_token`
           );
 
           // call approve
@@ -442,7 +442,7 @@
             signer: this.account
           }
           await this.$axios.post(
-            `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/setTarget`, body
+            `/api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/setTarget`, body
           );
         } catch (err) {
           console.log(err);
