@@ -160,6 +160,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
           const business = this.dummyData[this.allEntrepreneurs[e][1]];
           business['account'] = this.allEntrepreneurs[e][2];
           business['key'] = this.allEntrepreneurs[e][1];
+          business['progress'] = Math.round((this.allEntrepreneurs[e][4]/this.allEntrepreneurs[e][3])*100);
           this.entrepreneurs.push({person: person, business: business});
         }
       },

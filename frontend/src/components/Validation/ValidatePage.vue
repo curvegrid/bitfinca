@@ -161,21 +161,46 @@ import Entrepreneurs  from '../../assets/DummyData.json';
           const business = this.dummyData[this.allEntrepreneurs[e][1]];
           business['account'] = this.allEntrepreneurs[e][2];
           business['key'] = this.allEntrepreneurs[e][1];
+          business['progress'] = Math.round((this.allEntrepreneurs[e][4]/this.allEntrepreneurs[e][3])*100);
           this.entrepreneurs.push({person: person, business: business});
         }
       },
       async validate(account) {
         try {
           let body = { args: [account, this.approval], from: this.walletAddress, signer: this.walletAddress };
-          await this.axios.post(
+          var {
+          data: {
+            result: { tx, submitted },
+          },
+           } = await this.axios.post(
             `/api/v0/chains/ethereum/addresses/${this.$BITFINCA_CONTRACT}/contracts/bitfinca/methods/validate`,
             body
           );
+          if (!submitted) {
+            // Get the signer from MetaMask
+            const signer = this.$root.$_web3.getSigner(tx.from);
+            // Format the transaction so that ethers.js can sign it
+            const ethersTx = this.$root.$_cgutils.formatEthersTx(tx);
+            // Submit the transaction to the blockchain
+            const txResponse = await signer.sendTransaction(ethersTx);
+            this.response = txResponse;
+          }
+
           body = { args: [account, 1], from: this.walletAddress, signer: this.walletAddress };
+
           await this.axios.post(
             `/api/v0/chains/ethereum/addresses/${this.$TOKEN_CONTRACT}/contracts/finca_token/methods/incrementBalance`,
             body
           );
+          if (!submitted) {
+            // Get the signer from MetaMask
+            const signer = this.$root.$_web3.getSigner(tx.from);
+            // Format the transaction so that ethers.js can sign it
+            const ethersTx = this.$root.$_cgutils.formatEthersTx(tx);
+            // Submit the transaction to the blockchain
+            const txResponse = await signer.sendTransaction(ethersTx);
+            this.response = txResponse;
+          }
       } catch (err) {
         console.log(err);
       }

@@ -183,6 +183,11 @@
             <v-list-item-subtitle>Logged In</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
+          <v-list-item>
+            <v-list-item-subtitle>
+            <p class=body-text>{{ role }}</p>
+            </v-list-item-subtitle>
+          </v-list-item>
         <v-divider></v-divider>
           <v-list-item
             v-for="s in sideBar"
@@ -250,6 +255,7 @@ export default {
   name: "App",
   data: () => ({
     userBar: false,
+    role: "",
     icons: [{icon: "mdi-github", link: "https://github.com/curvegrid/bitfinca"}],
     lend: [{ title: "Browse Businesses", href: "/browse" }],
     borrow: [{ title: "Business Dashboard", href: "/dashboard" }],
@@ -314,7 +320,26 @@ export default {
           }
         });
       this.userData = response.data.results[0];
-    },
+      try {
+      const body = { args: [this.account], from: this.account }
+      const { data } = await this.axios.post(
+        `api/v0/chains/ethereum/addresses/bitfinca/contracts/bitfinca/methods/addressToRole`,
+        body
+      );
+      const role = data.result.output;
+      if (role[0]){
+        this.role += "Entrepreneur ";
+      }
+      if (role[1]){
+        this.role += "Validator ";
+      }
+      if (role[2]){
+        this.role += "Lender ";
+      }
+      console.log(this.role);
+      } catch (err) {
+        console.log(err);
+    }},
   },
 };
 </script>

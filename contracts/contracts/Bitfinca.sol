@@ -19,6 +19,7 @@ contract Bitfinca {
     string businessName;
     address account;
     uint target;
+    uint raisedAmount;
     uint creditScore; // on a scale of 0-800
     bool valid; // entrepreneur is active
   }
@@ -27,6 +28,12 @@ contract Bitfinca {
     string name;
     address account;
     bool valid; // validator is active
+  }
+
+  struct Roles {
+    bool entrepreneur;
+    bool validator;
+    bool lender;
   }
 
   /* Roles  */
@@ -45,12 +52,17 @@ contract Bitfinca {
   event NewLender(string name, address account);
   event NewValidator(string name, address account);
   event Validate(address business, bool approval);
+  event RemovedEntrepreneur(address account);
+  event RemovedValidator(address account);
+  event RemovedLender(address account);
 
   /* Mappings */
   mapping (address => uint256) public fundingTarget; // entrepreneur address => fundingTarget
   mapping(address => mapping(address => bool)) public entrepreneurToValidators; // entrepreneur address => Validator => approval
+  mapping(address => address[]) public entrepreneurToValidatorAdddress; // entrepreneur address => Validator address
   mapping(address => uint) public entrepreneurValidatorCount; // entrepreneur address => validatorCount
   mapping(address => uint) public entrepreneurToCreditsScore; // entrepreneur address to credit score
+  mapping(address => Roles) public addressToRole; //
 
   /* Modifiers*/
   modifier checkValidLender(address _account) {
@@ -87,24 +99,27 @@ contract Bitfinca {
     });
     allLenders.push(_account);
     registeredUser[_account] = true;
+    addressToRole[_account].lender = true;
     emit NewLender(_name, _account);
   }
 
-  function addEntrepreneur(string memory _name, string memory _businessName, address _account, uint _target) public {
+  function addEntrepreneur(string memory _name, string memory _businessName, address _account, uint _target, uint _raisedAmount) public {
     require(entrepreneurs[_account].valid == false, "You have already registered your business");
     entrepreneurs[_account] = Entrepreneur({
       founder: _name,
       businessName: _businessName,
       account: _account,
       target: _target,
+      raisedAmount: _raisedAmount,
       creditScore: defaultCreditScore,
       valid: true});
     fundingTarget[_account] = _target;
     entrepreneurValidatorCount[_account] = 0; // set validator count to 0
     allEntrepreneurs.push(_account);
     registeredUser[_account] = true;
+    addressToRole[_account].entrepreneur = true;
 
-    emit NewEntrepreneur(_name, _businessName, _account, _target, defaultCreditScore);
+    emit NewEntrepreneur(_name, _businessName, _account, _target, _raisedAmount);
   }
 
   function addValidator(string memory _name, address _account) public {
@@ -116,7 +131,36 @@ contract Bitfinca {
     });
     allValidators.push(_account);
     registeredUser[_account] = true;
+    addressToRole[_account].validator = true;
     emit NewValidator(_name, _account);
+  }
+
+  function removeValidator(address _account) public {
+    require(validators[_account].valid == true, "You are not an active validator");
+    validators[_account].valid = false;
+    addressToRole[_account].validator = false;
+
+    emit RemovedValidator(_account);
+  }
+
+  function removeLender(address _account) public {
+    require(lenders[_account].valid == true, "You are not an active lender");
+    lenders[_account].valid = false;
+    addressToRole[_account].lender = false;
+
+    emit RemovedLender(_account);
+  }
+
+  function removeEntrepreneur(address _account) public {
+    require(entrepreneurs[_account].valid == true, "You are not an active entrepreneur");
+    entrepreneurs[_account].valid = false;
+    addressToRole[_account].entrepreneur = false;
+
+    emit RemovedEntrepreneur(_account);
+  }
+
+  function getValidators(address _account) public view checkValidEntrepreneur(_account) returns(address[] memory){
+    return entrepreneurToValidatorAdddress[_account];
   }
 
   /* Entrepreneur */
@@ -154,6 +198,7 @@ contract Bitfinca {
         }
     }
     entrepreneurToValidators[business][msg.sender] = approval;
+    entrepreneurToValidatorAdddress[business].push(msg.sender);
 
     emit Validate(business, approval);
   }
