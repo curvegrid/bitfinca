@@ -419,7 +419,7 @@
               result: { tx, submitted },
             },
           } = await this.axios.post(
-            `/api/v0/chains/ethereum/addresses/suaave/contracts/suaave/methods/deposit`, body,
+            `/api/v0/chains/ethereum/addresses/suaave/contracts/suaave/methods/borrow`, body,
           );
           if (!submitted) {
             // Get the signer from MetaMask
