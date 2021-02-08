@@ -59,7 +59,7 @@ contract Bitfinca {
   /* Mappings */
   mapping (address => uint256) public fundingTarget; // entrepreneur address => fundingTarget
   mapping(address => mapping(address => bool)) public entrepreneurToValidators; // entrepreneur address => Validator => approval
-  mapping(address => address[]) public entrepreneurToValidatorAdddress; // entrepreneur address => Validator address
+  mapping(address => address[]) public entrepreneurToValidatorAddress; // entrepreneur address => Validator address
   mapping(address => uint) public entrepreneurValidatorCount; // entrepreneur address => validatorCount
   mapping(address => uint) public entrepreneurToCreditsScore; // entrepreneur address to credit score
   mapping(address => Roles) public addressToRole; //
@@ -160,7 +160,7 @@ contract Bitfinca {
   }
 
   function getValidators(address _account) public view checkValidEntrepreneur(_account) returns(address[] memory){
-    return entrepreneurToValidatorAdddress[_account];
+    return entrepreneurToValidatorAddress[_account];
   }
 
   /* Entrepreneur */
@@ -198,7 +198,7 @@ contract Bitfinca {
         }
     }
     entrepreneurToValidators[business][msg.sender] = approval;
-    entrepreneurToValidatorAdddress[business].push(msg.sender);
+    entrepreneurToValidatorAddress[business].push(msg.sender);
 
     emit Validate(business, approval);
   }
