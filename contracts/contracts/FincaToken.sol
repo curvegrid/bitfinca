@@ -7,6 +7,10 @@ contract FincaToken {
     owner = msg.sender;
   }
 
+  uint8 public constant decimals = 0;
+  string public constant name = "Finca Token";
+  string public constant symbol = "FINC";
+
   mapping (address => uint256) public _balances; // make private
   mapping (address => mapping (address => uint256)) private _allowed;
 
