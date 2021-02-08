@@ -102,7 +102,7 @@ export default {
       console.log("This account", account);
       try {
         const body = {
-          args: [this.name, this.businessName, this.walletAddress, this.target],
+          args: [this.name, this.businessName, this.walletAddress, this.target, 0],
           from: account,
           signer: account,
         }
