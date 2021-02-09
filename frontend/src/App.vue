@@ -275,7 +275,37 @@ export default {
     links: ["Home", "Contacts", "Settings"],
     mini: true,
     account: null,
-    userData: {},
+    userData: {
+      "name": {
+              "title": "Ms",
+              "first": "Judy",
+              "last": "Freeman"
+          },
+          "location": {
+              "street": {
+                  "number": 3896,
+                  "name": "Oak Lawn Ave"
+              },
+              "city": "Albany",
+              "state": "Tasmania",
+              "country": "Australia",
+              "postcode": 6633,
+              "coordinates": {
+                  "latitude": "-80.5181",
+                  "longitude": "89.6871"
+              },
+              "timezone": {
+                  "offset": "-12:00",
+                  "description": "Eniwetok, Kwajalein"
+              }
+          },
+          "email": "judy.freeman@example.com",
+          "picture": {
+              "large": "https://randomuser.me/api/portraits/women/72.jpg",
+              "medium": "https://randomuser.me/api/portraits/med/women/72.jpg",
+              "thumbnail": "https://randomuser.me/api/portraits/thumb/women/72.jpg"
+          }
+    },
   }),
   filters: {
     prettyJSON(value) {
@@ -288,14 +318,14 @@ export default {
     try {
       // If MetaMask's privacy mode is enabled, we must get the user's permission
       // in order to be able to access their signers
-      // if (window.ethereum != null) { // true if user is using MetaMask
-      //   await window.ethereum.enable();
-      // }
+      if (window.ethereum != null) { // true if user is using MetaMask
+        await window.ethereum.enable();
+      }
 
-      // this.connectToWeb3();
-      // this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
-      // this.account = await this.getActiveAccount();
-      // await this.getProfilePicture();
+      this.connectToWeb3();
+      this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+      this.account = await this.getActiveAccount();
+      await this.getProfilePicture();
     }
     catch (err) {
       console.log("Please connect to web3");
