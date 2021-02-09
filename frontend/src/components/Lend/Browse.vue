@@ -89,7 +89,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
 
   export default {
     data: () => ({
-      entrepreneurs: [],
+      entrepreneurs: Entrepreneurs['entrepreneurs'],
       allEntrepreneurs: [],
       dummyData: Entrepreneurs['entrepreneurs'],
       categories: [
@@ -97,6 +97,7 @@ import Entrepreneurs  from '../../assets/DummyData.json';
       ],
     }),
     async created() {
+      try {
       const Web3 = require('web3');
       if (window.ethereum != null) { // true if user is using MetaMask
         window.web3 = new Web3(window.ethereum);
@@ -106,6 +107,9 @@ import Entrepreneurs  from '../../assets/DummyData.json';
       this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
       this.walletAddress = await this.getActiveAccount();
       this.allEntrepreneurs = await this.getEntrepreneurs();
+      } catch (err) {
+        console.error(err);
+      }
     },
     methods: {
       connectToWeb3() {

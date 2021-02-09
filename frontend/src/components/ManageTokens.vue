@@ -163,7 +163,37 @@
       withdrawAmount: 0,
       headers: [],
       role: "",
-      userData: {},
+      userData: {
+        "name": {
+              "title": "Ms",
+              "first": "Judy",
+              "last": "Freeman"
+          },
+          "location": {
+              "street": {
+                  "number": 3896,
+                  "name": "Oak Lawn Ave"
+              },
+              "city": "Albany",
+              "state": "Tasmania",
+              "country": "Australia",
+              "postcode": 6633,
+              "coordinates": {
+                  "latitude": "-80.5181",
+                  "longitude": "89.6871"
+              },
+              "timezone": {
+                  "offset": "-12:00",
+                  "description": "Eniwetok, Kwajalein"
+              }
+          },
+          "email": "judy.freeman@example.com",
+          "picture": {
+              "large": "https://randomuser.me/api/portraits/women/72.jpg",
+              "medium": "https://randomuser.me/api/portraits/med/women/72.jpg",
+              "thumbnail": "https://randomuser.me/api/portraits/thumb/women/72.jpg"
+          }
+      },
       payments: [
         {
           name: 'Lender 1', amount: '210',
@@ -183,6 +213,7 @@
       ],
     }),
     async created() {
+      try {
       // If MetaMask's privacy mode is enabled, we must get the user's permission
       // in order to be able to access their signers
       const Web3 = require('web3');
@@ -198,6 +229,9 @@
       const gBalance = this.getTokenBalance();
       Promise.all([gtotal, gTrans, gBalance]).then(this.makeModel());
       await this.getUser();
+      } catch (err) {
+        console.log(err);
+      }
     },
     methods: {
       connectToWeb3() {

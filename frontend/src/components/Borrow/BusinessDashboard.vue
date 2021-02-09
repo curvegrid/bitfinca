@@ -205,20 +205,29 @@
       },
     },
     data: () => ({
-      businessName: "Education for All",
+      businessName: "My Business",
       firstName: "Alicia",
       personData: {
-        name: {
-          last: "Nieto"
-        },
-        location: {
-          city: "Barcelona",
-          country: "Spain",
-        },
-        email: "alicia.nieto@example.com",
-        picture: {
-          large: "https://randomuser.me/api/portraits/women/17.jpg"
-        }
+        "name": {
+              "title": "Ms",
+              "first": "Judy",
+              "last": "Freeman"
+          },
+          "location": {
+              "street": {
+                  "number": 3896,
+                  "name": "Oak Lawn Ave"
+              },
+              "city": "Albany",
+              "state": "Tasmania",
+              "country": "Australia",
+          },
+          "email": "judy.freeman@example.com",
+          "picture": {
+              "large": "https://randomuser.me/api/portraits/women/72.jpg",
+              "medium": "https://randomuser.me/api/portraits/med/women/72.jpg",
+              "thumbnail": "https://randomuser.me/api/portraits/thumb/women/72.jpg"
+          }
       },
       description: 'Information about my business',
       image: 'icons/clip-order-complete-1.png',
