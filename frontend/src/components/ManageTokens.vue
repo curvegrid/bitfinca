@@ -284,20 +284,55 @@
         }
       },
       async deposit() {
+        try{
         const body = {
           args: [this.depositAmount],
           from: this.account,
           signer: this.account
         }
-        await this.axios.post(`/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/deposit`, body);
+        const {
+          data: {
+            result: { tx, submitted },
+          },
+        } = await this.axios.post(`/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/deposit`, body);
+
+         if (!submitted) {
+          // Get the signer from MetaMask
+          const signer = this.$root.$_web3.getSigner(tx.from);
+          // Format the transaction so that ethers.js can sign it
+          const ethersTx = this.$root.$_cgutils.formatEthersTx(tx);
+          // Submit the transaction to the blockchain
+          const txResponse = await signer.sendTransaction(ethersTx);
+          this.response = txResponse;
+        }
+      } catch (err) {
+        console.log(err);
+      }
       },
       async withdraw() {
+        try {
         const body = {
           args: [this.withdrawAmount],
           from: this.account,
           signer: this.account
         }
-        await this.axios.post(`/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/withdraw`, body);
+        const {
+          data: {
+            result: { tx, submitted },
+          },
+        } = await this.axios.post(`/api/v0/chains/ethereum/addresses/finca_token/contracts/finca_token/methods/withdraw`, body);
+        if (!submitted) {
+          // Get the signer from MetaMask
+          const signer = this.$root.$_web3.getSigner(tx.from);
+          // Format the transaction so that ethers.js can sign it
+          const ethersTx = this.$root.$_cgutils.formatEthersTx(tx);
+          // Submit the transaction to the blockchain
+          const txResponse = await signer.sendTransaction(ethersTx);
+          this.response = txResponse;
+        }
+        } catch (err) {
+        console.log(err);
+        }
       },
       async getUser() {
       const response = await this.$axios.get('https://randomuser.me/api/', {

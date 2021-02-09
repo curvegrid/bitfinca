@@ -286,16 +286,16 @@ export default {
   /** DApp Sample **/
   async created() {
     try {
-    // If MetaMask's privacy mode is enabled, we must get the user's permission
-    // in order to be able to access their signers
-    if (window.ethereum != null) { // true if user is using MetaMask
-      await window.ethereum.enable();
-    }
+      // If MetaMask's privacy mode is enabled, we must get the user's permission
+      // in order to be able to access their signers
+      // if (window.ethereum != null) { // true if user is using MetaMask
+      //   await window.ethereum.enable();
+      // }
 
-    this.connectToWeb3();
-    this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
-    this.account = await this.getActiveAccount();
-    await this.getProfilePicture();
+      // this.connectToWeb3();
+      // this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
+      // this.account = await this.getActiveAccount();
+      // await this.getProfilePicture();
     }
     catch (err) {
       console.log("Please connect to web3");
