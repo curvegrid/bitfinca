@@ -20,6 +20,7 @@ export default {
         return tx;
       },
       connectToWeb3(browserHook) {
+        try{
         const result = {
           provider: null,
           web3Available: false,
@@ -34,6 +35,10 @@ export default {
           console.error('Read the instructions in MultiBaas > Account > Connecting to Geth');
         }
         return result;
+      }
+      catch (err) {
+        console.error("Please set up your Metamask network.")
+      }
       },
       createAxiosInstance(baseURL, apiKey) {
         return axios.create({
