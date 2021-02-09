@@ -138,7 +138,7 @@
             v-if="!isConnected"
             class="nav-button"
             outlined
-            @click="connectToWeb3()"
+            @click="connectToWallet()"
           >Connect to Wallet
           </v-btn>
         <div v-else>
@@ -256,7 +256,10 @@
           </v-card-text>
 
           <v-card-text class="white--text pt-0">
-            MarketMake Hackathon. Microfinance. Decentralized Borrowing and Lending.
+            <a style="text-decoration: none;color:white;" target="_blank" href='https://hack.ethglobal.co/showcase/bitfinca-recP3lJT5iwwS9R5C'>MarketMake Hackathon. </a>
+            <a style="text-decoration: none;color:white;" target="_blank"  href='https://www.curvegrid.com/'>Multibaas. </a>
+            <a style="text-decoration: none;color:white;" target="_blank"  href='https://www.curvegrid.com/'>Curvegrid. </a>
+            Microfinance. Decentralized Borrowing and Lending.
           </v-card-text>
 
           <v-divider></v-divider>
@@ -335,6 +338,16 @@ export default {
   },
   /** DApp Sample End **/
   methods: {
+    async connectToWallet() {
+      try {
+        if (window.ethereum != null) { // true if user is using MetaMask
+          await window.ethereum.enable();
+        }
+        this.connectToWeb3();
+      } catch (err) {
+        console.log("Failed to connect to web3. Please try again.");
+      }
+    },
     /** DApp Sample **/
     // We must init the web3 provider so that we can sign transactions
     connectToWeb3() {
