@@ -133,8 +133,14 @@
       </v-menu>
       <!-- validate end -->
 
-            <v-spacer></v-spacer>
-       <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+        <v-btn
+            target=""
+            class="page-button"
+            @click="connectToWeb3()"
+          >
+            <span class="mr-2">Connect to Wallet</span>
+          </v-btn>
     </v-app-bar>
 
   <!-- side bar end -->
