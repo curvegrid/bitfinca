@@ -135,12 +135,24 @@
 
       <v-spacer></v-spacer>
         <v-btn
-            target=""
-            class="page-button"
+            v-if="!isConnected"
+            class="nav-button"
+            outlined
             @click="connectToWeb3()"
-          >
-            <span class="mr-2">Connect to Wallet</span>
+          >Connect to Wallet
           </v-btn>
+        <div v-else>
+          <v-row class=mt-3 >
+      <v-col>
+        <v-text-field
+          readonly
+          label="Connected to:"
+          :value="account.substr(0, 6)+'...'+account.substr(38)"
+          prepend-icon="mdi-wallet"
+        ></v-text-field>
+      </v-col>
+    </v-row>
+        </div>
     </v-app-bar>
 
   <!-- side bar end -->
@@ -148,6 +160,7 @@
       app
       expand-on-hover
       right
+      :width="300"
     >
       <v-row
         class="fill-height"
@@ -162,7 +175,8 @@
         >
           <v-list-item two-line class="px-2">
             <v-list-item-avatar>
-              <v-img :src="userData.picture.large"></v-img>
+              <v-img v-if="isConnected" :src="userData.picture.large"></v-img>
+              <v-img v-else :src="require('./assets/avatarlogo.png')"></v-img>
             </v-list-item-avatar>
           </v-list-item>
 
@@ -181,12 +195,12 @@
             </v-list-item>
           </v-list>
         </v-navigation-drawer>
-        <v-layout justify-space-between column fill-height>
-        <v-list class="grow">
+        <v-layout column fill-height>
+        <v-list>
             <v-list-item two-line>
           <v-list-item-content>
-            <v-list-item-title><p>{{userData.name.first}}</p></v-list-item-title>
-            <v-list-item-subtitle>Logged In</v-list-item-subtitle>
+            <v-list-item-title class="title">{{userData.name.first}} {{userData.name.last}}</v-list-item-title>
+            <v-list-item-subtitle >{{logIn}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
           <v-list-item>
@@ -260,6 +274,8 @@
 export default {
   name: "App",
   data: () => ({
+    isConnected: false,
+    logIn: "Connect to Wallet",
     userBar: false,
     role: "",
     icons: [{icon: "mdi-github", link: "https://github.com/curvegrid/bitfinca"}],
@@ -283,33 +299,11 @@ export default {
     account: null,
     userData: {
       "name": {
-              "title": "Ms",
-              "first": "Judy",
-              "last": "Freeman"
+              "first": "Welcome",
+              "last": ""
           },
-          "location": {
-              "street": {
-                  "number": 3896,
-                  "name": "Oak Lawn Ave"
-              },
-              "city": "Albany",
-              "state": "Tasmania",
-              "country": "Australia",
-              "postcode": 6633,
-              "coordinates": {
-                  "latitude": "-80.5181",
-                  "longitude": "89.6871"
-              },
-              "timezone": {
-                  "offset": "-12:00",
-                  "description": "Eniwetok, Kwajalein"
-              }
-          },
-          "email": "judy.freeman@example.com",
           "picture": {
               "large": "https://randomuser.me/api/portraits/women/72.jpg",
-              "medium": "https://randomuser.me/api/portraits/med/women/72.jpg",
-              "thumbnail": "https://randomuser.me/api/portraits/thumb/women/72.jpg"
           }
     },
   }),
@@ -332,6 +326,8 @@ export default {
       this.axios = this.$root.$_cgutils.createAxiosInstance(this.$BASE_URL, this.$API_KEY);
       this.account = await this.getActiveAccount();
       await this.getProfilePicture();
+      this.isConnected = true;
+      this.logIn = "Logged in";
     }
     catch (err) {
       console.log("Please connect to web3");
