@@ -199,7 +199,7 @@
         <v-list>
             <v-list-item two-line>
           <v-list-item-content>
-            <v-list-item-title class="title">{{userData.name.first}} {{userData.name.last}}</v-list-item-title>
+            <v-list-item-title class="title">{{userData.name.first}}</v-list-item-title>
             <v-list-item-subtitle >{{logIn}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
