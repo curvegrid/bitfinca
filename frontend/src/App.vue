@@ -371,7 +371,6 @@ export default {
       if (role[2]){
         this.role += "Lender ";
       }
-      console.log(this.role);
       } catch (err) {
         console.log(err);
     }},

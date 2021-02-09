@@ -86,10 +86,11 @@
 
 <script>
 import Entrepreneurs  from '../../assets/DummyData.json';
+import DummyData  from '../../assets/DummyData2.json';
 
   export default {
     data: () => ({
-      entrepreneurs: Entrepreneurs['entrepreneurs'],
+      entrepreneurs: DummyData,
       allEntrepreneurs: [],
       dummyData: Entrepreneurs['entrepreneurs'],
       categories: [
