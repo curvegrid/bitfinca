@@ -1,4 +1,6 @@
 # Bitfinca: Democratising access to capital
+## Demo
+https://curvegrid.github.io/bitfinca/#/
 
 ![Bitfinca screenshot](./screenshot.png)
 
