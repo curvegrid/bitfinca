@@ -153,6 +153,7 @@ import DummyData  from '../../assets/DummyData2.json';
       } catch (err) {
         console.log(err);
       }
+        this.entrepreneurs = [];
         for (const e in this.allEntrepreneurs) {
           const { data } = await this.$axios.get('https://randomuser.me/api/', {
           params: {
